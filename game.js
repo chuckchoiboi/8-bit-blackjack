@@ -1,8 +1,8 @@
-import { renderStartScreen } from "./screen.js";
+import { renderStartScreen } from './screen.js';
 
 const init = () => {
-    let stage = new createjs.Stage("gameCanvas");
-    renderStartScreen(stage)
-}
+	let stage = new createjs.Stage('gameCanvas');
+	renderStartScreen(stage);
+};
 
-document.addEventListener("DOMContentLoaded", init)
+document.addEventListener('DOMContentLoaded', init);
