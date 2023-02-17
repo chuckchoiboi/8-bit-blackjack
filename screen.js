@@ -1,12 +1,12 @@
 // START SCREEN
 export const renderStartScreen = (canvas) => {
 	canvas.removeAllChildren();
-	canvas.enableMouseOver(50);
+	canvas.enableMouseOver(10);
 
 	// NOTE: Render on screen load
 	// Background
 	let startBackground = new createjs.Shape();
-	startBackground.graphics.beginFill('black').drawRect(0, 0, 960, 640);
+	startBackground.graphics.beginFill('#000000').drawRect(0, 0, 960, 640);
 	const startBackgroundWidth = startBackground.graphics.command.w;
 	const startBackgroundHeight = startBackground.graphics.command.h;
 
@@ -48,7 +48,7 @@ export const renderStartScreen = (canvas) => {
 	let creditText = new createjs.Text(
 		'CREATED BY CHUCK CHOI',
 		'20px Press Start',
-		'white'
+		'#ffffff'
 	);
 	creditText.textAlign = 'center';
 	creditText.textBaseline = 'middle';
@@ -58,7 +58,7 @@ export const renderStartScreen = (canvas) => {
 
 	// Start Sound
 	const startSound = new Audio('assets/audio/gameboy.mp3');
-	startSound.volume = 0.1;
+	startSound.volume = 0.5;
 
 	// Start Button
 	let startButton = new createjs.Text(
@@ -71,7 +71,7 @@ export const renderStartScreen = (canvas) => {
 	startButton.x = startBackgroundWidth / 2;
 	startButton.y = startBackgroundHeight / 1.25;
 	startButton.addEventListener('mouseover', () => {
-		startButton.color = 'white';
+		startButton.color = '#ffffff';
 		canvas.update();
 	});
 	startButton.addEventListener('mouseout', () => {
@@ -109,19 +109,90 @@ export const renderStartScreen = (canvas) => {
 };
 
 // GAME SCREEN
-const renderGameScreen = (canvas) => {
+export const renderGameScreen = (canvas) => {
+	canvas.enableMouseOver(10);
 	canvas.removeAllChildren();
 
 	// Background
 	let gameBackground = new createjs.Shape();
-	gameBackground.graphics.beginFill('green').drawRect(0, 0, 960, 640);
+	gameBackground.graphics.beginFill('#008000').drawRect(0, 0, 960, 640);
 
 	// shuffle sound when initialized
 	const shuffleSound = new Audio('assets/audio/shuffle.mp3');
-	shuffleSound.volume = 0.1;
-	shuffleSound.currentTime = 2;
+	shuffleSound.volume = 0.5;
+	shuffleSound.currentTime = 1;
 	shuffleSound.play();
+	shuffleSound.addEventListener('ended', () => {
+		// renderGameBoard(canvas);
+	});
 
 	canvas.addChild(gameBackground);
 	canvas.update();
+	renderGameBoard(canvas);
+};
+
+const renderGameBoard = (canvas) => {
+	// playUI and border
+	let playUI = new createjs.Shape();
+	playUI.graphics.beginFill('#000000').drawRect(745, 15, 200, 610);
+	let playUIBorder = new createjs.Shape();
+	playUIBorder.graphics.setStrokeStyle(1).beginStroke('#ffffff');
+	playUIBorder.graphics.drawRect(755, 25, 180, 590);
+
+	canvas.addChild(playUI, playUIBorder);
+	renderButton(canvas, 'HIT', { x: 760, y: 320, width: 170, height: 50 });
+	renderButton(canvas, 'STAND', { x: 760, y: 395, width: 170, height: 50 });
+	renderButton(canvas, 'DOUBLE', { x: 760, y: 470, width: 170, height: 50 });
+	renderButton(canvas, 'SPLIT', { x: 760, y: 545, width: 170, height: 50 });
+	canvas.update();
+};
+
+const renderButton = (canvas, text, { x, y, width, height }) => {
+	// create button
+	let button = new createjs.Shape();
+	button.graphics
+		.setStrokeStyle(3)
+		.beginStroke('#808080')
+		.beginFill('#000000')
+		.drawRoundRect(x, y, width, height, 10);
+
+	// add text to button
+	let buttonText = new createjs.Text(text, '20px Press Start', '#808080');
+	buttonText.textAlign = 'center';
+	buttonText.textBaseline = 'middle';
+	buttonText.x = x + width / 2;
+	buttonText.y = y + height / 2;
+
+	// set button cursor style to "pointer" for user feedback
+	button.cursor = 'pointer';
+
+	// change button color on mouseover/out
+	button.addEventListener('mouseover', () => {
+		button.graphics
+			.clear()
+			.setStrokeStyle(3)
+			.beginStroke('#ffffff')
+			.beginFill('#000000')
+			.drawRoundRect(x, y, width, height, 10);
+		buttonText.color = '#ffffff';
+		canvas.update();
+	});
+	button.addEventListener('mouseout', () => {
+		button.graphics
+			.clear()
+			.setStrokeStyle(3)
+			.beginStroke('#808080')
+			.beginFill('#000000')
+			.drawRoundRect(x, y, width, height, 10);
+		buttonText.color = '#808080';
+		canvas.update();
+	});
+
+	// add button to stage
+	canvas.addChild(button, buttonText);
+
+	// handle button click event
+	button.on('click', function () {
+		console.log(text);
+	});
 };
