@@ -70,6 +70,7 @@ export const renderStartScreen = (canvas) => {
 	startButton.textBaseline = 'middle';
 	startButton.x = startBackgroundWidth / 2;
 	startButton.y = startBackgroundHeight / 1.25;
+	startButton.cursor = 'pointer';
 	startButton.addEventListener('mouseover', () => {
 		startButton.color = '#ffffff';
 		canvas.update();
@@ -117,18 +118,63 @@ export const renderGameScreen = (canvas) => {
 	let gameBackground = new createjs.Shape();
 	gameBackground.graphics.beginFill('#008000').drawRect(0, 0, 960, 640);
 
-	// shuffle sound when initialized
+	// Initial load text
+	let text1 = new createjs.Text(
+		"Draw cards and beat the dealer's hand",
+		'20px Press Start',
+		'#ffffff'
+	);
+	let text2 = new createjs.Text(
+		'without going over 21!',
+		'20px Press Start',
+		'#ffffff'
+	);
+
+	// Set the text's position on the stage
+	text1.textAlign = 'center';
+	text1.textBaseline = 'middle';
+	text1.x = 480;
+	text1.y = 200;
+	text1.alpha = 0;
+	text2.textAlign = 'center';
+	text2.textBaseline = 'middle';
+	text2.x = 480;
+	text2.y = 300;
+	text2.alpha = 0;
+
+	// Make text1 appear for 4 seconds and remove
+	createjs.Tween.get(text1)
+		.wait(1000)
+		.to({ alpha: 1 }, 0)
+		.wait(4000)
+		.to({ alpha: 0 }, 0)
+		.call(() => {
+			canvas.removeChild(text1);
+		});
+
+	// Make text2 appear for 3 seconds and remove
+	createjs.Tween.get(text2)
+		.wait(2000)
+		.to({ alpha: 1 }, 0)
+		.wait(3000)
+		.to({ alpha: 0 }, 0)
+		.call(() => {
+			canvas.removeChild(text2);
+		});
+
+	// Play shuffle sound when initialized
 	const shuffleSound = new Audio('assets/audio/shuffle.mp3');
 	shuffleSound.volume = 0.5;
 	shuffleSound.currentTime = 1;
 	shuffleSound.play();
 	shuffleSound.addEventListener('ended', () => {
-		// renderGameBoard(canvas);
+		// render gameboard once shuffle sound is ended
+		renderGameBoard(canvas);
 	});
 
-	canvas.addChild(gameBackground);
+	canvas.addChild(gameBackground, text1, text2);
 	canvas.update();
-	renderGameBoard(canvas);
+	// renderGameBoard(canvas);
 };
 
 const renderGameBoard = (canvas) => {
