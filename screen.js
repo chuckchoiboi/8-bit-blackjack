@@ -1,3 +1,11 @@
+import {
+	chipImages,
+	placeBet,
+	doubleDown,
+	winBet,
+	isBettable,
+} from './chip.js';
+
 // START SCREEN
 export const renderStartScreen = (canvas) => {
 	canvas.removeAllChildren();
@@ -114,6 +122,9 @@ export const renderGameScreen = (canvas) => {
 	canvas.enableMouseOver(10);
 	canvas.removeAllChildren();
 
+	let playerChips = 1000;
+	let betAmount = 0;
+
 	// Background
 	let gameBackground = new createjs.Shape();
 	gameBackground.graphics.beginFill('#008000').drawRect(0, 0, 960, 640);
@@ -168,13 +179,188 @@ export const renderGameScreen = (canvas) => {
 	shuffleSound.currentTime = 1;
 	shuffleSound.play();
 	shuffleSound.addEventListener('ended', () => {
-		// render gameboard once shuffle sound is ended
-		renderGameBoard(canvas);
+		// render betting UI
+		renderBettingUI(canvas, playerChips, betAmount);
 	});
 
 	canvas.addChild(gameBackground, text1, text2);
 	canvas.update();
-	// renderGameBoard(canvas);
+};
+
+const renderBettingUI = (canvas, playerChips, betAmount) => {
+	let canvasWidth = 960;
+	let canvasHeight = 640;
+	let bettingUI = new createjs.Shape();
+	bettingUI.graphics
+		.beginFill('#000000')
+		.drawRect(
+			canvasWidth / 4,
+			canvasHeight / 4,
+			canvasWidth / 2,
+			canvasHeight / 2
+		);
+	// Heading text
+	let headingText = new createjs.Text(
+		'Place your bet: $0',
+		'20px Press Start',
+		'#ffffff'
+	);
+	headingText.textAlign = 'center';
+	headingText.x = canvasWidth / 2;
+	headingText.y = canvasHeight / 4 + 200;
+
+	// Player chips total
+	let chipsTotalText = new createjs.Text(
+		`Chips total: $${playerChips}`,
+		'20px Press Start',
+		'#ffffff'
+	);
+	chipsTotalText.textAlign = 'center';
+	chipsTotalText.x = canvasWidth / 2;
+	chipsTotalText.y = canvasHeight / 4 + 40;
+
+	// chips: $5, $10, $25, $100
+	const chipSound = new Audio('assets/audio/coins.mp3');
+	chipSound.volume = 0.5;
+
+	let chip5 = new createjs.Bitmap(chipImages['5']);
+	chip5.x = canvasWidth / 4 + 50;
+	chip5.y = canvasHeight / 4 + 90;
+	chip5.cursor = 'pointer';
+	chip5.addEventListener('click', () => {
+		if (playerChips - (betAmount + 5) >= 0) {
+			betAmount += 5;
+			chipSound.pause();
+			chipSound.currentTime = 0;
+			chipSound.play();
+		}
+		headingText.text = `Place your bet: $${betAmount}`;
+		canvas.update();
+	});
+
+	let chip10 = new createjs.Bitmap(chipImages['10']);
+	chip10.x = canvasWidth / 4 + 150;
+	chip10.y = canvasHeight / 4 + 90;
+	chip10.cursor = 'pointer';
+	chip10.addEventListener('click', () => {
+		if (playerChips - (betAmount + 10) >= 0) {
+			betAmount += 10;
+			chipSound.pause();
+			chipSound.currentTime = 0;
+			chipSound.play();
+		}
+		headingText.text = `Place your bet: $${betAmount}`;
+		canvas.update();
+	});
+
+	let chip25 = new createjs.Bitmap(chipImages['25']);
+	chip25.x = canvasWidth / 4 + 250;
+	chip25.y = canvasHeight / 4 + 90;
+	chip25.cursor = 'pointer';
+	chip25.addEventListener('click', () => {
+		if (playerChips - (betAmount + 25) >= 0) {
+			betAmount += 25;
+			chipSound.pause();
+			chipSound.currentTime = 0;
+			chipSound.play();
+		}
+		headingText.text = `Place your bet: $${betAmount}`;
+		canvas.update();
+	});
+
+	let chip100 = new createjs.Bitmap(chipImages['100']);
+	chip100.x = canvasWidth / 4 + 350;
+	chip100.y = canvasHeight / 4 + 90;
+	chip100.cursor = 'pointer';
+	chip100.addEventListener('click', () => {
+		if (playerChips - (betAmount + 100) >= 0) {
+			betAmount += 100;
+			chipSound.pause();
+			chipSound.currentTime = 0;
+			chipSound.play();
+		}
+		headingText.text = `Place your bet: $${betAmount}`;
+		canvas.update();
+	});
+
+	let bettingButton = new createjs.Shape();
+	bettingButton.graphics
+		.beginFill('#000000')
+		.beginStroke('#ffffff')
+		.drawRect(
+			canvasWidth / 4 + 20,
+			(canvasHeight * 3) / 4 - 60,
+			canvasWidth / 4 - 30,
+			50
+		);
+
+	bettingButton.cursor = 'pointer';
+	bettingButton.addEventListener('click', () => {
+		placeBet(betAmount, playerChips);
+		// renderPlay
+	});
+
+	let bettingButtonText = new createjs.Text(
+		'Bet',
+		'20px Press Start',
+		'#ffffff'
+	);
+	bettingButtonText.textAlign = 'center';
+	bettingButtonText.textBaseline = 'middle';
+	bettingButtonText.x =
+		bettingButton.graphics.command.x + bettingButton.graphics.command.w / 2;
+	bettingButtonText.y =
+		bettingButton.graphics.command.y + bettingButton.graphics.command.h / 2;
+
+	let clearBetButton = new createjs.Shape();
+	clearBetButton.graphics
+		.beginFill('#000000')
+		.beginStroke('#ffffff')
+		.drawRect(
+			canvasWidth / 2 + 10,
+			(canvasHeight * 3) / 4 - 60,
+			canvasWidth / 4 - 30,
+			50
+		);
+	clearBetButton.cursor = 'pointer';
+	clearBetButton.addEventListener('click', () => {
+		betAmount = 0;
+		headingText.text = `Place your bet: $${betAmount}`;
+		canvas.update();
+	});
+
+	let clearBetButtonText = new createjs.Text(
+		'Clear Bet',
+		'20px Press Start',
+		'#ffffff'
+	);
+	clearBetButtonText.textAlign = 'center';
+	clearBetButtonText.textBaseline = 'middle';
+	clearBetButtonText.x =
+		clearBetButton.graphics.command.x +
+		clearBetButton.graphics.command.w / 2;
+	clearBetButtonText.y =
+		clearBetButton.graphics.command.y +
+		clearBetButton.graphics.command.h / 2;
+
+	canvas.addChild(
+		bettingUI,
+		headingText,
+		chipsTotalText,
+		chip5,
+		chip10,
+		chip25,
+		chip100,
+		bettingButton,
+		bettingButtonText,
+		clearBetButton,
+		clearBetButtonText
+	);
+};
+
+const playGame = (canvas, playerChips, betAmount) => {
+	// renderPlays
+	//
 };
 
 const renderGameBoard = (canvas) => {
@@ -186,14 +372,29 @@ const renderGameBoard = (canvas) => {
 	playUIBorder.graphics.drawRect(755, 25, 180, 590);
 
 	canvas.addChild(playUI, playUIBorder);
-	renderButton(canvas, 'HIT', { x: 760, y: 320, width: 170, height: 50 });
-	renderButton(canvas, 'STAND', { x: 760, y: 395, width: 170, height: 50 });
-	renderButton(canvas, 'DOUBLE', { x: 760, y: 470, width: 170, height: 50 });
-	renderButton(canvas, 'SPLIT', { x: 760, y: 545, width: 170, height: 50 });
+	renderPlayButton(canvas, 'HIT', { x: 760, y: 320, width: 170, height: 50 });
+	renderPlayButton(canvas, 'STAND', {
+		x: 760,
+		y: 395,
+		width: 170,
+		height: 50,
+	});
+	renderPlayButton(canvas, 'DOUBLE', {
+		x: 760,
+		y: 470,
+		width: 170,
+		height: 50,
+	});
+	renderPlayButton(canvas, 'SPLIT', {
+		x: 760,
+		y: 545,
+		width: 170,
+		height: 50,
+	});
 	canvas.update();
 };
 
-const renderButton = (canvas, text, { x, y, width, height }) => {
+const renderPlayButton = (canvas, text, { x, y, width, height }) => {
 	// create button
 	let button = new createjs.Shape();
 	button.graphics
