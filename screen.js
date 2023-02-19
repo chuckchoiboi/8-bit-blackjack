@@ -5,6 +5,7 @@ import {
 	winBet,
 	isBettable,
 } from './chip.js';
+import { createDeck, shuffleDeck, drawCard, getHandValue } from './deck.js';
 
 // START SCREEN
 export const renderStartScreen = (canvas) => {
@@ -38,14 +39,14 @@ export const renderStartScreen = (canvas) => {
 
 	// NOTE: Elements to render on start button click
 	// Jack of Spades
-	let jack = new createjs.Bitmap('assets/img/cards/11s.gif');
+	let jack = new createjs.Bitmap('assets/img/cards/jack-spades.gif');
 	jack.scaleX = 3;
 	jack.scaleY = 3;
 	jack.x = startBackgroundWidth / 2 - (32 * 3) / 2;
 	jack.y = startBackgroundHeight / 1.8 - (48 * 3) / 2;
 
 	// Ace of Spades
-	let ace = new createjs.Bitmap('assets/img/cards/01s.gif');
+	let ace = new createjs.Bitmap('assets/img/cards/ace-spades.gif');
 	ace.scaleX = 3;
 	ace.scaleY = 3;
 	ace.x = startBackgroundWidth / 2 - (32 * 3) / 2 - 40;
@@ -283,6 +284,9 @@ const renderBettingUI = (canvas, playerChips, betAmount) => {
 		canvas.update();
 	});
 
+	const buttonClickSound = new Audio('assets/audio/cardDrop.mp3');
+	buttonClickSound.volume = 0.5;
+
 	let bettingButton = new createjs.Shape();
 	bettingButton.graphics
 		.beginFill('#000000')
@@ -296,8 +300,25 @@ const renderBettingUI = (canvas, playerChips, betAmount) => {
 
 	bettingButton.cursor = 'pointer';
 	bettingButton.addEventListener('click', () => {
-		placeBet(betAmount, playerChips);
-		// renderPlay
+		buttonClickSound.play();
+
+		if (betAmount > 0) {
+			placeBet(betAmount, playerChips);
+			canvas.removeChild(
+				bettingUI,
+				headingText,
+				chipsTotalText,
+				chip5,
+				chip10,
+				chip25,
+				chip100,
+				bettingButton,
+				bettingButtonText,
+				clearBetButton,
+				clearBetButtonText
+			);
+			renderGame(canvas, playerChips, betAmount);
+		}
 	});
 
 	let bettingButtonText = new createjs.Text(
@@ -327,6 +348,7 @@ const renderBettingUI = (canvas, playerChips, betAmount) => {
 		betAmount = 0;
 		headingText.text = `Place your bet: $${betAmount}`;
 		canvas.update();
+		buttonClickSound.play();
 	});
 
 	let clearBetButtonText = new createjs.Text(
@@ -358,12 +380,49 @@ const renderBettingUI = (canvas, playerChips, betAmount) => {
 	);
 };
 
-const playGame = (canvas, playerChips, betAmount) => {
-	// renderPlays
-	//
+const renderGame = (canvas, playerChips, betAmount) => {
+	const deck = createDeck();
+	const playerHand = [];
+	const dealerHand = [];
+
+	shuffleDeck(deck);
+
+	playerHand.push(drawCard(deck));
+	dealerHand.push(drawCard(deck));
+	playerHand.push(drawCard(deck));
+	dealerHand.push(drawCard(deck));
+
+	// initial render logic
+	const playerCard1 = new createjs.Bitmap(
+		`assets/img/cards/${playerHand[0].value}-${playerHand[0].suit}.gif`
+	);
+	const playerCard2 = new createjs.Bitmap(
+		`assets/img/cards/${playerHand[1].value}-${playerHand[1].suit}.gif`
+	);
+	const dealerCard1 = new createjs.Bitmap(
+		`assets/img/cards/${dealerHand[0].value}-${dealerHand[0].suit}.gif`
+	);
+	const dealerCard2 = new createjs.Bitmap('assets/img/cards/back01.gif');
+
+	const initialRenderStack = [
+		playerCard1,
+		dealerCard1,
+		playerCard2,
+		dealerCard2,
+	];
+
+	for (let i = 0; i < initialRenderStack.length; i++) {
+		initialRenderStack[i].scaleX = 3;
+		initialRenderStack[i].scaleY = 3;
+		initialRenderStack[i].x = i <= 1 ? 50 : 90;
+		initialRenderStack[i].y = i % 2 === 1 ? 100 : 400;
+	}
+
+	canvas.addChild(playerCard1, dealerCard1, playerCard2, dealerCard2);
+	canvas.update();
 };
 
-const renderGameBoard = (canvas) => {
+const renderPlayUI = (canvas) => {
 	// playUI and border
 	let playUI = new createjs.Shape();
 	playUI.graphics.beginFill('#000000').drawRect(745, 15, 200, 610);
