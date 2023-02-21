@@ -179,9 +179,17 @@ export const renderGameScreen = (canvas) => {
 	shuffleSound.volume = 0.5;
 	shuffleSound.currentTime = 1;
 	shuffleSound.play();
+
+	// Play background music once shuffle is finished
+	const backgroundMusic = new Audio('assets/audio/background.mp3');
+	backgroundMusic.volume = 0.3;
+	backgroundMusic.currentTime = 1;
+	backgroundMusic.loop = true;
+
 	shuffleSound.addEventListener('ended', () => {
 		// render betting UI
 		renderBettingUI(canvas, playerChips, betAmount);
+		backgroundMusic.play();
 	});
 
 	canvas.addChild(gameBackground, text1, text2);
@@ -284,8 +292,8 @@ const renderBettingUI = (canvas, playerChips, betAmount) => {
 		canvas.update();
 	});
 
-	const buttonClickSound = new Audio('assets/audio/cardDrop.mp3');
-	buttonClickSound.volume = 0.5;
+	const cardDropSound = new Audio('assets/audio/cardDrop.mp3');
+	cardDropSound.volume = 0.5;
 
 	let bettingButton = new createjs.Shape();
 	bettingButton.graphics
@@ -300,7 +308,7 @@ const renderBettingUI = (canvas, playerChips, betAmount) => {
 
 	bettingButton.cursor = 'pointer';
 	bettingButton.addEventListener('click', () => {
-		buttonClickSound.play();
+		cardDropSound.play();
 
 		if (betAmount > 0) {
 			placeBet(betAmount, playerChips);
@@ -348,7 +356,7 @@ const renderBettingUI = (canvas, playerChips, betAmount) => {
 		betAmount = 0;
 		headingText.text = `Place your bet: $${betAmount}`;
 		canvas.update();
-		buttonClickSound.play();
+		cardDropSound.play();
 	});
 
 	let clearBetButtonText = new createjs.Text(
@@ -405,32 +413,70 @@ const renderGame = (canvas, playerChips, betAmount) => {
 	const dealerCard2 = new createjs.Bitmap('assets/img/cards/back01.gif');
 
 	const initialRenderStack = [
-		playerCard1,
-		dealerCard1,
-		playerCard2,
-		dealerCard2,
+		playerCard1, // 0, false
+		dealerCard1, // 0, true
+		playerCard2, // 1, false
+		dealerCard2, // 1, true
 	];
 
 	for (let i = 0; i < initialRenderStack.length; i++) {
-		initialRenderStack[i].scaleX = 3;
-		initialRenderStack[i].scaleY = 3;
-		initialRenderStack[i].x = i <= 1 ? 50 : 90;
-		initialRenderStack[i].y = i % 2 === 1 ? 100 : 400;
+		setTimeout(() => {
+			renderCard(
+				canvas,
+				initialRenderStack[i],
+				i <= 1 ? 0 : 1,
+				i % 2 !== 0
+			);
+		}, 1000 * (i + 1));
 	}
+	setTimeout(() => {
+		renderPlayUI(canvas, playerChips, betAmount);
+	}, 4500);
+};
 
-	canvas.addChild(playerCard1, dealerCard1, playerCard2, dealerCard2);
+const renderCard = (canvas, hand, position, isDealer = false) => {
+	const cardDropSound = new Audio('assets/audio/cardDrop.mp3');
+
+	hand.x = 50 + 40 * position;
+	hand.y = isDealer ? 100 : 400;
+	hand.scaleX = 3;
+	hand.scaleY = 3;
+	cardDropSound.play();
+	canvas.addChild(hand);
 	canvas.update();
 };
 
-const renderPlayUI = (canvas) => {
+const renderPlayUI = (canvas, playerChips, betAmount) => {
 	// playUI and border
 	let playUI = new createjs.Shape();
 	playUI.graphics.beginFill('#000000').drawRect(745, 15, 200, 610);
 	let playUIBorder = new createjs.Shape();
-	playUIBorder.graphics.setStrokeStyle(1).beginStroke('#ffffff');
+	playUIBorder.graphics.setStrokeStyle(2).beginStroke('#ffffff');
 	playUIBorder.graphics.drawRect(755, 25, 180, 590);
 
-	canvas.addChild(playUI, playUIBorder);
+	// display player chips
+	let playerChipsDisplay = new createjs.Text(
+		`Chips:\n\n$${playerChips}`,
+		'20px Press Start',
+		'#ffffff'
+	);
+	playerChipsDisplay.textAlign = 'center';
+	playerChipsDisplay.textBaseline = 'middle';
+	playerChipsDisplay.x = 845;
+	playerChipsDisplay.y = 80;
+
+	// display bet amount
+	let betAmountDisplay = new createjs.Text(
+		`Bet:\n\n$${betAmount}`,
+		'20px Press Start',
+		'#ffffff'
+	);
+	betAmountDisplay.textAlign = 'center';
+	betAmountDisplay.textBaseline = 'middle';
+	betAmountDisplay.x = 845;
+	betAmountDisplay.y = 220;
+
+	canvas.addChild(playUI, playUIBorder, playerChipsDisplay, betAmountDisplay);
 	renderPlayButton(canvas, 'HIT', { x: 760, y: 320, width: 170, height: 50 });
 	renderPlayButton(canvas, 'STAND', {
 		x: 760,
