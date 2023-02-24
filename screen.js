@@ -433,8 +433,13 @@ const clearTableAndRenderBetUI = (canvas) => {
 	renderBettingUI(canvas);
 };
 
-const checkWinner = (isPlayerBusted = false, isBlackjack = false) => {
-	if (isPlayerBusted) return 'You Busted.\nDealer Wins';
+const checkWinner = (
+	isPlayerBusted = false,
+	isBlackjack = false,
+	isDealerBlackjack = false
+) => {
+	if (isDealerBlackjack) return 'Dealer got Blackjack.\nDealer Wins';
+	if (isPlayerBusted) return 'Player Busted.\nDealer Wins';
 
 	let playerTotal = getHandValue(playerHand);
 	let dealerTotal = getHandValue(dealerHand);
@@ -444,14 +449,16 @@ const checkWinner = (isPlayerBusted = false, isBlackjack = false) => {
 			playerChips += betAmount;
 			return 'Push';
 		} else {
-			playerChips += Math.floor(playerChips * (3 / 2));
-			return 'You got Blackjack!\nPlayer Wins';
+			playerChips += betAmount + Math.floor(betAmount * (3 / 2));
+			return `Player got Blackjack!\nPlayer Wins $${Math.floor(
+				betAmount * (3 / 2)
+			)}`;
 		}
 	}
 
 	if (dealerTotal > 21) {
 		playerChips += betAmount * 2;
-		return 'Dealer Busted.\nPlayer Wins';
+		return `Dealer Busted.\nPlayer Wins $${betAmount}`;
 	}
 
 	if (playerTotal === dealerTotal) {
@@ -459,7 +466,7 @@ const checkWinner = (isPlayerBusted = false, isBlackjack = false) => {
 		return 'Push';
 	} else if (playerTotal > dealerTotal) {
 		playerChips += betAmount * 2;
-		return 'Player Wins';
+		return `Player Wins $${betAmount}`;
 	} else {
 		return 'Dealer Wins';
 	}
@@ -469,10 +476,11 @@ const showWinner = (
 	canvas,
 	isPlayerBusted = false,
 	isBlackjack = false,
-	isDoubled = false
+	isDoubled = false,
+	isDealerBlackjack = false
 ) => {
 	let winnerDisplay = new createjs.Text(
-		`${checkWinner(isPlayerBusted, isBlackjack)}`,
+		`${checkWinner(isPlayerBusted, isBlackjack, isDealerBlackjack)}`,
 		'20px Press Start',
 		'#ffffff'
 	);
@@ -495,12 +503,12 @@ const showWinner = (
 			canvas.addChild(winnerDisplay);
 			canvas.update();
 		},
-		isDoubled ? 1000 : 0
+		isDoubled || isDealerBlackjack ? 1000 : 0
 	);
 
 	setTimeout(() => {
 		clearTableAndRenderBetUI(canvas);
-	}, 2000 + (isDoubled ? 1000 : 0));
+	}, 2000 + (isDoubled || isDealerBlackjack ? 1000 : 0));
 };
 
 const renderGame = (canvas) => {
@@ -547,11 +555,27 @@ const renderGame = (canvas) => {
 		}, 1000 * (i + 1));
 	}
 	setTimeout(() => {
-		// check player blackjack, then check dealer blackjack
 		if (getHandValue(playerHand) === 21) {
 			showWinner(canvas, false, true);
 		} else {
-			renderPlayUI(canvas);
+			if (getHandValue(dealerHand) === 21) {
+				setTimeout(() => {
+					const dealerBackCard = new createjs.Bitmap(
+						`assets/img/cards/${
+							dealerHand[dealerHand.length - 1].value
+						}-${dealerHand[dealerHand.length - 1].suit}.gif`
+					);
+					renderCard(
+						canvas,
+						dealerBackCard,
+						dealerHand.length - 1,
+						true
+					);
+				}, 1000);
+				showWinner(canvas, false, false, false, true);
+			} else {
+				renderPlayUI(canvas);
+			}
 		}
 	}, 4500);
 };
