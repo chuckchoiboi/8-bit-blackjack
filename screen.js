@@ -548,7 +548,7 @@ const showWinner = (
 	winnerDisplay.textAlign = 'center';
 	winnerDisplay.textBaseline = 'middle';
 	winnerDisplay.x = 960 / 2;
-	winnerDisplay.y = 640 / 2;
+	winnerDisplay.y = 640 / 2 - 50;
 
 	if (isDoubled) {
 		const doubledCard = new createjs.Bitmap(
