@@ -538,6 +538,8 @@ const showWinner = (
 	isDoubled = false,
 	isDealerBlackjack = false
 ) => {
+	if (isDoubled && getHandValue(playerHand) > 21) isPlayerBusted = true;
+
 	let winnerDisplay = new createjs.Text(
 		`${checkWinner(isPlayerBusted, isBlackjack, isDealerBlackjack)}`,
 		'20px Press Start',
@@ -814,12 +816,19 @@ const renderPlayUI = (canvas) => {
 		'HIT',
 		{ x: 760, y: 395, width: 170, height: 50 },
 		() => {
+			if (playerHand.length === 2) {
+				canvas.removeChild(doubleButton, doubleButtonText);
+			}
 			playerHand.push(drawCard(deck));
 			const drawnCard = new createjs.Bitmap(
 				`assets/img/cards/${playerHand[playerHand.length - 1].value}-${
 					playerHand[playerHand.length - 1].suit
 				}.gif`
 			);
+			playerHandTotal += getCardValue(
+				playerHand[playerHand.length - 1].value
+			);
+			renderHandTotal(canvas, playerHandTotalText, false, false);
 			renderCard(canvas, drawnCard, playerHand.length - 1);
 
 			// if player busts or gets to 21, check dealer cards. If player busts, player loses. If 21, check winner
@@ -874,6 +883,7 @@ const renderPlayUI = (canvas) => {
 				);
 				let isDoubled = true;
 
+				renderHandTotal(canvas, playerHandTotalText, true, false);
 				renderCard(canvas, drawnCard, playerHand.length - 1);
 				hidePlayUI(canvas);
 				playDealer(canvas, false, isDoubled);
