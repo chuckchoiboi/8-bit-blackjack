@@ -75,3 +75,23 @@ export const getHandValue = (hand) => {
 
 	return handValue;
 };
+
+// Calculates the value of the given hand of cards.
+export const getCardValue = (handValue) => {
+	if (handValue === 'jack' || handValue === 'queen' || handValue === 'king') {
+		return 10;
+	} else if (handValue === 'ace') {
+		return 1;
+	} else {
+		return parseInt(handValue);
+	}
+};
+
+export const checkAce = (hand) => {
+	for (let i = 0; i < hand.length; i++) {
+		if (hand[i].value === 'ace') {
+			return true;
+		}
+	}
+	return false;
+};

@@ -1,5 +1,12 @@
 import { chipImages } from './chip.js';
-import { createDeck, shuffleDeck, drawCard, getHandValue } from './deck.js';
+import {
+	createDeck,
+	shuffleDeck,
+	drawCard,
+	getHandValue,
+	getCardValue,
+	checkAce,
+} from './deck.js';
 
 // background
 let gameBackground;
@@ -13,6 +20,24 @@ let canvasHeight = 640;
 let bettingUI;
 let bettingUIHeadingText;
 let bettingUIChipsTotalText;
+
+// game UI variables
+let dealerHandTotal = 0;
+let playerHandTotal = 0;
+let dealerHandTotalText = new createjs.Text(
+	'Dealer Total:',
+	'20px Press Start',
+	'#ffffff'
+);
+let playerHandTotalText = new createjs.Text(
+	'Player Total:',
+	'20px Press Start',
+	'#ffffff'
+);
+dealerHandTotalText.x = 50;
+dealerHandTotalText.y = 60;
+playerHandTotalText.x = 50;
+playerHandTotalText.y = 360;
 
 // play UI variables
 let playUI;
@@ -410,6 +435,36 @@ const renderBettingUI = (canvas) => {
 	);
 };
 
+const renderHandTotal = (
+	canvas,
+	totalText,
+	hasFaceDown = false,
+	isDealer = false
+) => {
+	let textToShow = isDealer
+		? `Dealer Total: ${dealerHandTotal}`
+		: `Player Total: ${playerHandTotal}`;
+
+	if (isDealer && checkAce(dealerHand)) {
+		textToShow =
+			dealerHandTotal + 10 <= 21
+				? `Dealer Total: ${dealerHandTotal + 10} (${dealerHandTotal})`
+				: `Dealer Total: ${dealerHandTotal}`;
+	} else if (!isDealer && checkAce(playerHand)) {
+		textToShow =
+			playerHandTotal + 10 <= 21
+				? `Player Total: ${playerHandTotal + 10} (${playerHandTotal})`
+				: `Player Total: ${playerHandTotal}`;
+	}
+
+	if (hasFaceDown) {
+		textToShow += ' + ?';
+	}
+	totalText.text = textToShow;
+	canvas.addChild(totalText);
+	canvas.update();
+};
+
 const renderCard = (canvas, card, position, isDealer = false) => {
 	card.x = 50 + 40 * position;
 	card.y = isDealer ? 100 : 400;
@@ -422,6 +477,10 @@ const renderCard = (canvas, card, position, isDealer = false) => {
 
 const clearTableAndRenderBetUI = (canvas) => {
 	betAmount = 0;
+	dealerHandTotalText.text = 'Dealer Total:';
+	playerHandTotalText.text = 'Player Total:';
+	playerHandTotal = 0;
+	dealerHandTotal = 0;
 	hitButton = new createjs.Shape();
 	hitButtonText = new createjs.Text('', '20px Press Start', '#808080');
 	standButton = new createjs.Shape();
@@ -495,6 +554,10 @@ const showWinner = (
 				playerHand[playerHand.length - 1].suit
 			}.gif`
 		);
+		playerHandTotal += getCardValue(
+			playerHand[playerHand.length - 1].value
+		);
+		renderHandTotal(canvas, playerHandTotalText, false, false);
 		renderCard(canvas, doubledCard, playerHand.length - 1);
 	}
 
@@ -512,6 +575,8 @@ const showWinner = (
 };
 
 const renderGame = (canvas) => {
+	canvas.addChild(dealerHandTotalText, playerHandTotalText);
+	canvas.update();
 	deck.length = 0;
 	playerHand.length = 0;
 	dealerHand.length = 0;
@@ -552,6 +617,19 @@ const renderGame = (canvas) => {
 				i <= 1 ? 0 : 1,
 				i % 2 !== 0
 			);
+			if (i === 0) {
+				playerHandTotal += getCardValue(playerHand[0].value);
+			} else if (i === 1) {
+				dealerHandTotal += getCardValue(dealerHand[0].value);
+			} else if (i === 2) {
+				playerHandTotal += getCardValue(playerHand[1].value);
+			}
+			renderHandTotal(
+				canvas,
+				i % 2 !== 0 ? dealerHandTotalText : playerHandTotalText,
+				i === 3,
+				i % 2 !== 0
+			);
 		}, 1000 * (i + 1));
 	}
 	setTimeout(() => {
@@ -571,6 +649,10 @@ const renderGame = (canvas) => {
 						dealerHand.length - 1,
 						true
 					);
+					dealerHandTotal += getCardValue(
+						dealerHand[dealerHand.length - 1].value
+					);
+					renderHandTotal(canvas, dealerHandTotalText, false, true);
 				}, 1000);
 				showWinner(canvas, false, false, false, true);
 			} else {
@@ -593,6 +675,10 @@ const playDealer = (canvas, isPlayerBusted = false, isDoubled = false) => {
 						dealerHand[dealerHand.length - 1].value
 					}-${dealerHand[dealerHand.length - 1].suit}.gif`
 				);
+				dealerHandTotal += getCardValue(
+					dealerHand[dealerHand.length - 1].value
+				);
+				renderHandTotal(canvas, dealerHandTotalText, false, true);
 				renderCard(canvas, drawnCard, dealerHand.length - 1, true);
 				// recursion until dealer card is over 17
 				drawDealerCard();
@@ -603,6 +689,10 @@ const playDealer = (canvas, isPlayerBusted = false, isDoubled = false) => {
 		}, 1000);
 	};
 	setTimeout(() => {
+		dealerHandTotal += getCardValue(
+			dealerHand[dealerHand.length - 1].value
+		);
+		renderHandTotal(canvas, dealerHandTotalText, false, true);
 		if (isPlayerBusted) {
 			renderCard(canvas, faceDownCard, 1, true);
 			showWinner(canvas, isPlayerBusted);
