@@ -117,4 +117,23 @@ export const deckLogic = {
 
 		return drawnCard;
 	},
+
+	isBlackjack: (player) => {
+		if (player.hand.length !== 2) {
+			return false;
+		}
+
+		// Check if the hand contains an ace and a ten-point card
+		let hasAce = false;
+		let hasTen = false;
+		for (let card of player.hand) {
+			if (card.rank === 'A') {
+				hasAce = true;
+			} else if (['K', 'Q', 'J', '10'].includes(card.rank)) {
+				hasTen = true;
+			}
+		}
+
+		return hasAce && hasTen;
+	},
 };
