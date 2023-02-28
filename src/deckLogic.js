@@ -136,4 +136,9 @@ export const deckLogic = {
 
 		return hasAce && hasTen;
 	},
+
+	isBust: (player) => {
+		let total = deckLogic.getHandValue(player.hand);
+		return total > 21;
+	},
 };
