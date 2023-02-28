@@ -1,3 +1,5 @@
+import { deckLogic } from './deckLogic';
+
 class Player extends createjs.Container {
 	constructor() {
 		super();
