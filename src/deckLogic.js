@@ -118,6 +118,26 @@ export const deckLogic = {
 		return drawnCard;
 	},
 
+	getCardSprite: (card) => {
+		// Create a container to hold the card image and back image
+		const container = new createjs.Container();
+
+		// Create the back image and card image
+		const backImage = new createjs.Bitmap('./assets/img/cards/back01.gif');
+		const cardImage = new createjs.Bitmap(
+			`./assets/img/cards/${card.rank}-${card.suit}.gif`
+		);
+
+		// Set the visibility of the images based on the "hidden" property
+		backImage.visible = card.hidden;
+		cardImage.visible = !card.hidden;
+
+		// Add the images to the container
+		container.addChild(backImage, cardImage);
+
+		return container;
+	},
+
 	isBlackjack: (player) => {
 		if (player.hand.length !== 2) {
 			return false;

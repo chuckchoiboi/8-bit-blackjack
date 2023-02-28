@@ -1,4 +1,5 @@
 import { deckLogic } from './deckLogic';
+import { Player, Dealer } from './Player';
 
 const game = {
 	stage: null,
@@ -75,7 +76,7 @@ const game = {
 
 	stand: () => {
 		// Reveal dealer's second card
-		game.dealer.revealCard();
+		game.dealer.revealHand();
 
 		// Dealer hits until at least 17
 		while (deckLogic.getHandValue(game.dealer.hand) < 17) {
@@ -110,11 +111,11 @@ const game = {
 			alert('Bust! You lose!');
 
 			// Reveal dealer's second card and end the game immediately
-			game.dealer.revealCard();
+			game.dealer.revealHand();
 			game.endRound();
 		} else {
 			// Reveal dealer's second card
-			game.dealer.revealCard();
+			game.dealer.revealHand();
 
 			// Dealer hits until at least 17
 			while (deckLogic.getHandValue(game.dealer.hand) < 17) {
