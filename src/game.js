@@ -1,15 +1,25 @@
-import { deckLogic } from './deckLogic';
-import { Player, Dealer } from './Player';
+import { deckLogic } from './deckLogic.js';
+import { Player, Dealer } from './Player.js';
+import { getStartScreen } from './stage.js';
 
 const game = {
 	stage: null,
+	backgroundMusic: null,
 	player: null,
 	dealer: null,
 
-	start: () => {
+	loadStartScreen: () => {
 		// Create the game stage
 		game.stage = new createjs.Stage('gameCanvas');
+		game.stage.enableMouseOver(10);
 
+		const startScreen = getStartScreen(game);
+
+		game.stage.addChild(startScreen);
+		game.stage.update();
+	},
+
+	startGame: () => {
 		// Create the player and dealer
 		game.player = new Player();
 		game.dealer = new Dealer();
@@ -151,4 +161,4 @@ const game = {
 	},
 };
 
-window.onload = game.start;
+window.onload = game.loadStartScreen;

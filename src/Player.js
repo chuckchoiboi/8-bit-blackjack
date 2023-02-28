@@ -1,4 +1,4 @@
-import { deckLogic } from './deckLogic';
+import { deckLogic } from './deckLogic.js';
 
 class Player extends createjs.Container {
 	constructor() {
@@ -6,6 +6,8 @@ class Player extends createjs.Container {
 
 		this.hand = [];
 		this.handValue = 0;
+		this.chips = 1000;
+		this.betAmount = 0;
 
 		// Add graphics for the player's cards
 		this.cardsContainer = new createjs.Container();
@@ -26,6 +28,8 @@ class Player extends createjs.Container {
 	reset() {
 		this.hand = [];
 		this.handValue = 0;
+		this.chips = 1000;
+		this.betAmount = 0;
 
 		// Reset the graphics for the player's cards
 		this.cardsContainer.removeAllChildren();
