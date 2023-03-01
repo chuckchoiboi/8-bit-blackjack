@@ -3,7 +3,7 @@ export const assetManager = {
 	loadAssets: (manifest, callback) => {
 		const loader = new createjs.LoadQueue();
 		loader.addEventListener('fileload', (event) => {
-			assetManager.assets[event.item.id] = event.result;
+			assetManager.assets[event.item.name] = event.result;
 		});
 		loader.addEventListener('complete', () => {
 			callback();
