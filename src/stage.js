@@ -54,7 +54,7 @@ export const getStartScreen = (game) => {
 	creditText.alpha = 0;
 
 	// Start Sound
-	const startSound = new Audio(game.assets.getAsset('startSound'));
+	const startSound = game.assets.getAsset('startSound');
 	startSound.volume = 0.5;
 
 	// Start Button
