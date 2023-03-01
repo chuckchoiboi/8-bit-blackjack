@@ -157,7 +157,9 @@ export const getGameScreen = (game) => {
 			game.stage.removeChild(startText2);
 		});
 
-	// play shuffle sound when game starts
+	// Play shuffle Sound
+	const shuffleSound = game.assets.getAsset('shuffleSound');
+	shuffleSound.volume = 0.5;
 	shuffleSound.play();
 
 	// shuffleSound.addEventListener('ended', () => {

@@ -178,6 +178,7 @@ assetManager.loadAssets(
 		{ name: 'J-spades', src: 'assets/img/cards/J-spades.gif' },
 		{ name: 'A-spades', src: 'assets/img/cards/A-spades.gif' },
 		{ name: 'startSound', src: 'assets/audio/gameboy.mp3' },
+		{ name: 'shuffleSound', src: 'assets/audio/shuffle.mp3' },
 	],
 	() => {
 		// load start screen
