@@ -92,7 +92,7 @@ export const getStartScreen = (game) => {
 		createjs.Ticker.addEventListener('tick', tick);
 
 		setTimeout(() => {
-			renderGameScreen(canvas);
+			game.loadGameScreen();
 		}, 3000);
 	});
 

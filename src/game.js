@@ -19,6 +19,10 @@ const game = {
 		game.stage.update();
 	},
 
+	loadGameScreen: () => {
+		game.stage.removeAllChildren();
+	},
+
 	startGame: () => {
 		// Create the player and dealer
 		game.player = new Player();
