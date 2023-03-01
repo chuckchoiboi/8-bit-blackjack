@@ -181,6 +181,6 @@ assetManager.loadAssets(
 	],
 	() => {
 		// load start screen
-		game.loadStartScreen;
+		game.loadStartScreen();
 	}
 );
