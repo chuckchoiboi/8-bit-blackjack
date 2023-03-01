@@ -19,7 +19,7 @@ export const getStartScreen = (game) => {
 	titleText.y = startBackgroundHeight / 4;
 
 	// Backcard
-	const backCard = new createjs.Bitmap('assets/img/cards/back01.gif');
+	const backCard = new createjs.Bitmap(game.assets.getAsset('backCard'));
 	backCard.scaleX = 3;
 	backCard.scaleY = 3;
 	backCard.x = startBackgroundWidth / 2 - (32 * 3) / 2;
@@ -27,14 +27,14 @@ export const getStartScreen = (game) => {
 
 	// NOTE: Elements to render on start button click
 	// Jack of Spades
-	const jack = new createjs.Bitmap('assets/img/cards/J-spades.gif');
+	const jack = new createjs.Bitmap(game.assets.getAsset('J-spades'));
 	jack.scaleX = 3;
 	jack.scaleY = 3;
 	jack.x = startBackgroundWidth / 2 - (32 * 3) / 2;
 	jack.y = startBackgroundHeight / 1.8 - (48 * 3) / 2;
 
 	// Ace of Spades
-	const ace = new createjs.Bitmap('assets/img/cards/A-spades.gif');
+	const ace = new createjs.Bitmap(game.assets.getAsset('A-spades'));
 	ace.scaleX = 3;
 	ace.scaleY = 3;
 	ace.x = startBackgroundWidth / 2 - (32 * 3) / 2 - 40;
@@ -54,7 +54,7 @@ export const getStartScreen = (game) => {
 	creditText.alpha = 0;
 
 	// Start Sound
-	const startSound = new Audio('assets/audio/gameboy.mp3');
+	const startSound = new Audio(game.assets.getAsset('startSound'));
 	startSound.volume = 0.5;
 
 	// Start Button
@@ -92,6 +92,7 @@ export const getStartScreen = (game) => {
 		createjs.Ticker.addEventListener('tick', tick);
 
 		setTimeout(() => {
+			game.stage.removeAllChildren();
 			game.loadGameScreen();
 		}, 3000);
 	});
@@ -103,6 +104,69 @@ export const getStartScreen = (game) => {
 		titleText,
 		startButton
 	);
+
+	return container;
+};
+
+export const getGameScreen = (game) => {
+	const container = new createjs.Container();
+
+	const gameBackground = new createjs.Shape();
+	gameBackground.graphics.beginFill('#008000').drawRect(0, 0, 960, 640);
+
+	// Initial load text
+	const startText1 = new createjs.Text(
+		"Draw cards and beat the dealer's hand",
+		'20px Press Start',
+		'#ffffff'
+	);
+	startText1.textAlign = 'center';
+	startText1.textBaseline = 'middle';
+	startText1.x = 480;
+	startText1.y = 200;
+	startText1.alpha = 0;
+
+	const startText2 = new createjs.Text(
+		'without going over 21!',
+		'20px Press Start',
+		'#ffffff'
+	);
+	startText2.textAlign = 'center';
+	startText2.textBaseline = 'middle';
+	startText2.x = 480;
+	startText2.y = 300;
+	startText2.alpha = 0;
+
+	// Make text1 appear for 4 seconds and remove
+	createjs.Tween.get(startText1)
+		.wait(1000)
+		.to({ alpha: 1 }, 0)
+		.wait(4000)
+		.to({ alpha: 0 }, 0)
+		.call(() => {
+			game.stage.removeChild(startText1);
+		});
+
+	// Make text2 appear for 3 seconds and remove
+	createjs.Tween.get(startText2)
+		.wait(2000)
+		.to({ alpha: 1 }, 0)
+		.wait(3000)
+		.to({ alpha: 0 }, 0)
+		.call(() => {
+			game.stage.removeChild(startText2);
+		});
+
+	// play shuffle sound when game starts
+	shuffleSound.play();
+
+	// shuffleSound.addEventListener('ended', () => {
+	// 	// render betting UI once the game ends and play music
+	// 	renderBettingUI(canvas);
+	// 	backgroundMusic.play();
+	// });
+
+	container.addChild(gameBackground, startText1, startText2);
 
 	return container;
 };

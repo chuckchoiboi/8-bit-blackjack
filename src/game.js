@@ -1,14 +1,17 @@
 import { deckLogic } from './deckLogic.js';
 import { Player, Dealer } from './Player.js';
-import { getStartScreen } from './stage.js';
+import { getStartScreen, getGameScreen } from './stage.js';
+import { assetManager } from './assetManager.js';
 
 const game = {
 	stage: null,
 	backgroundMusic: null,
 	player: null,
 	dealer: null,
+	assets: null,
 
 	loadStartScreen: () => {
+		game.assets = assetManager;
 		// Create the game stage
 		game.stage = new createjs.Stage('gameCanvas');
 		game.stage.enableMouseOver(10);
@@ -20,7 +23,10 @@ const game = {
 	},
 
 	loadGameScreen: () => {
-		game.stage.removeAllChildren();
+		const gameScreen = getGameScreen(game);
+
+		game.stage.addChild(gameScreen);
+		game.stage.update();
 	},
 
 	startGame: () => {
@@ -165,4 +171,16 @@ const game = {
 	},
 };
 
-window.onload = game.loadStartScreen;
+// Load game assets
+assetManager.loadAssets(
+	[
+		{ name: 'backCard', src: 'assets/img/cards/back01.gif' },
+		{ name: 'J-spades', src: 'assets/img/cards/J-spades.gif' },
+		{ name: 'A-spades', src: 'assets/img/cards/A-spades.gif' },
+		{ name: 'startSound', src: 'assets/audio/gameboy.mp3' },
+	],
+	() => {
+		// load start screen
+		game.loadStartScreen;
+	}
+);
