@@ -97,6 +97,20 @@ export const getStartScreen = (game) => {
 		}, 3000);
 	});
 
+	// start button hit area
+	const startButtonHitArea = new createjs.Shape();
+	startButtonHitArea.graphics
+		.beginFill('#000000')
+		.drawRect(
+			-startButton.getMeasuredWidth() / 2,
+			-startButton.getMeasuredHeight() / 2,
+			startButton.getMeasuredWidth(),
+			startButton.getMeasuredHeight()
+		);
+
+	console.log(startButton.getMeasuredHeight());
+	startButton.hitArea = startButtonHitArea;
+
 	container.addChild(
 		startBackground,
 		backCard,
@@ -162,13 +176,21 @@ export const getGameScreen = (game) => {
 	shuffleSound.volume = 0.5;
 	shuffleSound.play();
 
-	// shuffleSound.addEventListener('ended', () => {
-	// 	// render betting UI once the game ends and play music
-	// 	renderBettingUI(canvas);
-	// 	backgroundMusic.play();
-	// });
+	shuffleSound.addEventListener('ended', () => {
+		// render betting UI once the game ends and play music
+		const backgroundMusic = game.assets.getAsset('backgroundMusic');
+		backgroundMusic.volume = 0.5;
+		backgroundMusic.play();
+
+		// render betting UI
+		game.loadBettingUI();
+	});
 
 	container.addChild(gameBackground, startText1, startText2);
 
 	return container;
+};
+
+export const renderBettingUI = (game) => {
+	console.log(game.stage);
 };

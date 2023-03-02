@@ -1,6 +1,6 @@
 import { deckLogic } from './deckLogic.js';
 import { Player, Dealer } from './Player.js';
-import { getStartScreen, getGameScreen } from './stage.js';
+import { getStartScreen, getGameScreen, renderBettingUI } from './stage.js';
 import { assetManager } from './assetManager.js';
 
 const game = {
@@ -27,6 +27,10 @@ const game = {
 
 		game.stage.addChild(gameScreen);
 		game.stage.update();
+	},
+
+	loadBettingUI: () => {
+		renderBettingUI(game);
 	},
 
 	startGame: () => {
@@ -179,6 +183,7 @@ assetManager.loadAssets(
 		{ name: 'A-spades', src: 'assets/img/cards/A-spades.gif' },
 		{ name: 'startSound', src: 'assets/audio/gameboy.mp3' },
 		{ name: 'shuffleSound', src: 'assets/audio/shuffle.mp3' },
+		{ name: 'backgroundMusic', src: 'assets/audio/background.mp3' },
 	],
 	() => {
 		// load start screen
