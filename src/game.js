@@ -29,10 +29,6 @@ const game = {
 		game.stage.update();
 	},
 
-	loadBettingUI: () => {
-		renderBettingUI(game);
-	},
-
 	startGame: () => {
 		// Create the player and dealer
 		game.player = new Player();
@@ -41,25 +37,7 @@ const game = {
 		// Add them to the stage
 		game.stage.addChild(game.player, game.dealer);
 
-		// // Connect bet button to betting UI's bet button
-		// let betButton = document.getElementById('betButton');
-		// betButton.addEventListener('click', game.deal);
-
-		let hitButton = document.getElementById('hitButton');
-		hitButton.addEventListener('click', game.hit);
-		hitButton.mouseEnabled = false;
-
-		let standButton = document.getElementById('standButton');
-		standButton.addEventListener('click', game.stand);
-		standButton.mouseEnabled = false;
-
-		let doubleButton = document.getElementById('doubleButton');
-		doubleButton.addEventListener('click', game.double);
-		doubleButton.mouseEnabled = false;
-
-		// Update the stage
-		createjs.Ticker.framerate = 60;
-		createjs.Ticker.addEventListener('tick', game.stage);
+		renderBettingUI(game);
 	},
 
 	deal: () => {
@@ -181,9 +159,15 @@ assetManager.loadAssets(
 		{ name: 'backCard', src: 'assets/img/cards/back01.gif' },
 		{ name: 'J-spades', src: 'assets/img/cards/J-spades.gif' },
 		{ name: 'A-spades', src: 'assets/img/cards/A-spades.gif' },
+		{ name: 'chip5', src: 'assets/img/chips/white-chip.png' },
+		{ name: 'chip10', src: 'assets/img/chips/red-chip.png' },
+		{ name: 'chip25', src: 'assets/img/chips/green-chip.png' },
+		{ name: 'chip100', src: 'assets/img/chips/black-chip.png' },
 		{ name: 'startSound', src: 'assets/audio/gameboy.mp3' },
 		{ name: 'shuffleSound', src: 'assets/audio/shuffle.mp3' },
 		{ name: 'backgroundMusic', src: 'assets/audio/background.mp3' },
+		{ name: 'chipSound', src: 'assets/audio/coins.mp3' },
+		{ name: 'cardDropSound', src: 'assets/audio/cardDrop.mp3' },
 	],
 	() => {
 		// load start screen
