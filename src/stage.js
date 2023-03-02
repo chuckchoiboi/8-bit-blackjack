@@ -4,8 +4,8 @@ export const getStartScreen = (game) => {
 	// Background
 	const startBackground = new createjs.Shape();
 	startBackground.graphics.beginFill('#000000').drawRect(0, 0, 960, 640);
-	const startBackgroundWidth = startBackground.graphics.command.w;
-	const startBackgroundHeight = startBackground.graphics.command.h;
+	const canvasWidth = game.stage.canvas.width;
+	const canvasHeight = game.stage.canvas.height;
 
 	// Title Text
 	const titleText = new createjs.Text(
@@ -15,30 +15,30 @@ export const getStartScreen = (game) => {
 	);
 	titleText.textAlign = 'center';
 	titleText.textBaseline = 'middle';
-	titleText.x = startBackgroundWidth / 2;
-	titleText.y = startBackgroundHeight / 4;
+	titleText.x = canvasWidth / 2;
+	titleText.y = canvasHeight / 4;
 
 	// Backcard
 	const backCard = new createjs.Bitmap(game.assets.getAsset('backCard'));
 	backCard.scaleX = 3;
 	backCard.scaleY = 3;
-	backCard.x = startBackgroundWidth / 2 - (32 * 3) / 2;
-	backCard.y = startBackgroundHeight / 1.8 - (48 * 3) / 2;
+	backCard.x = canvasWidth / 2 - (32 * 3) / 2;
+	backCard.y = canvasHeight / 1.8 - (48 * 3) / 2;
 
 	// NOTE: Elements to render on start button click
 	// Jack of Spades
 	const jack = new createjs.Bitmap(game.assets.getAsset('J-spades'));
 	jack.scaleX = 3;
 	jack.scaleY = 3;
-	jack.x = startBackgroundWidth / 2 - (32 * 3) / 2;
-	jack.y = startBackgroundHeight / 1.8 - (48 * 3) / 2;
+	jack.x = canvasWidth / 2 - (32 * 3) / 2;
+	jack.y = canvasHeight / 1.8 - (48 * 3) / 2;
 
 	// Ace of Spades
 	const ace = new createjs.Bitmap(game.assets.getAsset('A-spades'));
 	ace.scaleX = 3;
 	ace.scaleY = 3;
-	ace.x = startBackgroundWidth / 2 - (32 * 3) / 2 - 40;
-	ace.y = startBackgroundHeight / 1.8 - (48 * 3) / 2 + 20;
+	ace.x = canvasWidth / 2 - (32 * 3) / 2 - 40;
+	ace.y = canvasHeight / 1.8 - (48 * 3) / 2 + 20;
 	ace.rotation = -25;
 
 	// Credit Text
@@ -49,8 +49,8 @@ export const getStartScreen = (game) => {
 	);
 	creditText.textAlign = 'center';
 	creditText.textBaseline = 'middle';
-	creditText.x = startBackgroundWidth / 2;
-	creditText.y = startBackgroundHeight / 1.1;
+	creditText.x = canvasWidth / 2;
+	creditText.y = canvasHeight / 1.1;
 	creditText.alpha = 0;
 
 	// Start Sound
@@ -65,8 +65,8 @@ export const getStartScreen = (game) => {
 	);
 	startButton.textAlign = 'center';
 	startButton.textBaseline = 'middle';
-	startButton.x = startBackgroundWidth / 2;
-	startButton.y = startBackgroundHeight / 1.25;
+	startButton.x = canvasWidth / 2;
+	startButton.y = canvasHeight / 1.25;
 	startButton.cursor = 'pointer';
 	startButton.addEventListener('mouseover', () => {
 		startButton.color = '#ffffff';
@@ -192,8 +192,8 @@ export const getGameScreen = (game) => {
 
 export const renderBettingUI = (game) => {
 	const container = game.stage.getChildAt(0);
-	const canvasWidth = container.getChildAt(0).graphics.command.w;
-	const canvasHeight = container.getChildAt(0).graphics.command.h;
+	const canvasWidth = game.stage.canvas.width;
+	const canvasHeight = game.stage.canvas.height;
 	const chipSound = game.assets.getAsset('chipSound');
 	const cardDropSound = game.assets.getAsset('cardDropSound');
 
@@ -273,7 +273,7 @@ export const renderBettingUI = (game) => {
 		game.stage.update();
 	});
 
-	const chip100 = new createjs.Bitmap(game.assets.getAsset('chip25'));
+	const chip100 = new createjs.Bitmap(game.assets.getAsset('chip100'));
 	chip100.x = canvasWidth / 4 + 350;
 	chip100.y = canvasHeight / 4 + 90;
 	chip100.cursor = 'pointer';
@@ -320,7 +320,7 @@ export const renderBettingUI = (game) => {
 				clearBetButton,
 				clearBetButtonText
 			);
-			// renderGame(canvas);
+			game.deal();
 		}
 	});
 

@@ -1,9 +1,10 @@
 import { deckLogic } from './deckLogic.js';
 import { Player, Dealer } from './Player.js';
+import { Card } from './Card.js';
 import { getStartScreen, getGameScreen, renderBettingUI } from './stage.js';
 import { assetManager } from './assetManager.js';
 
-const game = {
+export const game = {
 	stage: null,
 	backgroundMusic: null,
 	player: null,
@@ -12,6 +13,30 @@ const game = {
 
 	loadStartScreen: () => {
 		game.assets = assetManager;
+
+		// Add all 52 cards to the asset manager
+		for (let rank of [
+			'A',
+			'2',
+			'3',
+			'4',
+			'5',
+			'6',
+			'7',
+			'8',
+			'9',
+			'10',
+			'J',
+			'Q',
+			'K',
+		]) {
+			for (let suit of ['clubs', 'diamonds', 'hearts', 'spades']) {
+				const cardName = `${rank}-${suit}`;
+				const cardPath = `assets/img/cards/${cardName}.gif`;
+				game.assets.addAsset(cardName, cardPath);
+			}
+		}
+
 		// Create the game stage
 		game.stage = new createjs.Stage('gameCanvas');
 		game.stage.enableMouseOver(10);
@@ -40,7 +65,9 @@ const game = {
 		renderBettingUI(game);
 	},
 
-	deal: () => {
+	deal: async () => {
+		deckLogic.resetDeck();
+		deckLogic.shuffleDeck();
 		game.player.reset();
 		game.dealer.reset();
 
@@ -49,6 +76,23 @@ const game = {
 		game.dealer.addCard(deckLogic.drawCard());
 		game.player.addCard(deckLogic.drawCard());
 		game.dealer.addCard(deckLogic.drawCard(true));
+
+		// Define card images to render
+		const playerCard1 = new Card(game.player.hand[0]);
+		const dealerCard1 = new Card(game.dealer.hand[0]);
+		const playerCard2 = new Card(game.player.hand[1]);
+		const dealerCard2 = new Card(game.dealer.hand[1]);
+
+		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+		// Render the cards one by one with a delay between each card
+		await playerCard1.renderCard(0, false);
+		await delay(1000);
+		await dealerCard1.renderCard(0, true);
+		await delay(1000);
+		await playerCard2.renderCard(1, false);
+		await delay(1000);
+		await dealerCard2.renderCard(1, true);
 
 		// Check for natural blackjack
 		if (deckLogic.isBlackjack(game.player)) {
@@ -60,10 +104,10 @@ const game = {
 			return;
 		}
 
-		// Enable/disable buttons
-		hitButton.disabled = false;
-		standButton.disabled = false;
-		doubleButton.disabled = false;
+		// // Enable/disable buttons
+		// hitButton.disabled = false;
+		// standButton.disabled = false;
+		// doubleButton.disabled = false;
 	},
 
 	hit: () => {
@@ -157,8 +201,6 @@ const game = {
 assetManager.loadAssets(
 	[
 		{ name: 'backCard', src: 'assets/img/cards/back01.gif' },
-		{ name: 'J-spades', src: 'assets/img/cards/J-spades.gif' },
-		{ name: 'A-spades', src: 'assets/img/cards/A-spades.gif' },
 		{ name: 'chip5', src: 'assets/img/chips/white-chip.png' },
 		{ name: 'chip10', src: 'assets/img/chips/red-chip.png' },
 		{ name: 'chip25', src: 'assets/img/chips/green-chip.png' },
