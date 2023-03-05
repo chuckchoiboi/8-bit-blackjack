@@ -5,13 +5,18 @@ export class Card extends createjs.Container {
 		super();
 
 		// Create the front and back of the card
-		this.back = new createjs.Bitmap(game.assets.getAsset('backCard'));
 		this.front = new createjs.Bitmap(
 			game.assets.getAsset(`${card.rank}-${card.suit}`)
 		);
+		this.front.scaleX = 3;
+		this.front.scaleY = 3;
+
+		this.back = new createjs.Bitmap(game.assets.getAsset('backCard'));
+		this.back.scaleX = 3;
+		this.back.scaleY = 3;
 
 		// Add them to the container
-		this.addChild(this.back, this.front);
+		this.addChild(this.front, this.back);
 
 		// Hide the front of the card
 		this.front.visible = !card.hidden;
@@ -19,10 +24,14 @@ export class Card extends createjs.Container {
 	}
 
 	flip() {
+		const cardDropSound = game.assets.getAsset('cardDropSound');
+		cardDropSound.volume = 0.5;
+
 		// Animate card flip
 		createjs.Tween.get(this.back)
 			.to({ alpha: 0 }, 200)
 			.call(() => {
+				cardDropSound.play();
 				this.back.visible = false;
 				this.front.visible = true;
 			})
@@ -30,11 +39,18 @@ export class Card extends createjs.Container {
 	}
 
 	renderCard(cardIndex, isDealer) {
+		const cardDropSound = game.assets.getAsset('cardDropSound');
+		cardDropSound.volume = 0.5;
+
 		return new Promise((resolve) => {
 			let x = 50 + 40 * cardIndex;
 			let y = isDealer ? 100 : 400;
-			// Use createjs.Tween to animate the movement of the card
-			createjs.Tween.get(this).to({ x, y }, 10000).call(resolve);
+			createjs.Tween.get(this)
+				.to({ x, y }, 1000)
+				.call(() => {
+					cardDropSound.play();
+					resolve();
+				});
 		});
 	}
 }

@@ -60,16 +60,17 @@ export const game = {
 		game.dealer = new Dealer();
 
 		// Add them to the stage
-		game.stage.addChild(game.player, game.dealer);
+		game.stage.addChild(game.player.container, game.dealer.container);
 
 		renderBettingUI(game);
 	},
-
 	deal: async () => {
 		deckLogic.resetDeck();
 		deckLogic.shuffleDeck();
 		game.player.reset();
 		game.dealer.reset();
+
+		console.log(game.stage);
 
 		// Deal the initial cards
 		game.player.addCard(deckLogic.drawCard());
@@ -83,16 +84,15 @@ export const game = {
 		const playerCard2 = new Card(game.player.hand[1]);
 		const dealerCard2 = new Card(game.dealer.hand[1]);
 
-		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 		// Render the cards one by one with a delay between each card
 		await playerCard1.renderCard(0, false);
-		await delay(1000);
+		game.player.container.addChild(playerCard1);
 		await dealerCard1.renderCard(0, true);
-		await delay(1000);
+		game.dealer.container.addChild(dealerCard1);
 		await playerCard2.renderCard(1, false);
-		await delay(1000);
+		game.player.container.addChild(playerCard2);
 		await dealerCard2.renderCard(1, true);
+		game.dealer.container.addChild(dealerCard2);
 
 		// Check for natural blackjack
 		if (deckLogic.isBlackjack(game.player)) {
