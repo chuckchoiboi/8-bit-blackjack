@@ -307,6 +307,7 @@ export const renderBettingUI = (game) => {
 
 		if (game.player.betAmount > 0) {
 			game.player.chips -= game.player.betAmount;
+
 			container.removeChild(
 				bettingUI,
 				bettingUIHeadingText,

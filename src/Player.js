@@ -24,12 +24,16 @@ class Player extends createjs.Container {
 		return deckLogic.isBust(this);
 	}
 
-	reset() {
+	resetHand() {
 		this.hand = [];
 		this.handValue = 0;
-		this.chips = 1000;
 		this.betAmount = 0;
 		this.container.removeAllChildren();
+	}
+
+	resetGame() {
+		this.chips = 1000;
+		this.resetHand();
 	}
 }
 
@@ -51,7 +55,11 @@ class Dealer extends createjs.Container {
 		return deckLogic.isBlackjack(this);
 	}
 
-	reset() {
+	isBust() {
+		return deckLogic.isBust(this);
+	}
+
+	resetHand() {
 		this.hand = [];
 		this.handValue = 0;
 		this.container.removeAllChildren();

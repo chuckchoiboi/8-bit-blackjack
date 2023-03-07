@@ -73,8 +73,8 @@ export const game = {
 	deal: async () => {
 		deckLogic.resetDeck();
 		deckLogic.shuffleDeck();
-		game.player.reset();
-		game.dealer.reset();
+		game.player.resetHand();
+		game.dealer.resetHand();
 
 		// Deal the initial cards
 		game.player.addCard(deckLogic.drawCard());
@@ -107,11 +107,13 @@ export const game = {
 			}
 
 			alert('Blackjack! You win!');
+			game.endRound();
 			return;
 		}
 		if (game.dealer.isBlackjack()) {
 			await dealerCard2.flip();
 			alert('Dealer has blackjack! You lose!');
+			game.endRound();
 			return;
 		}
 
@@ -177,11 +179,13 @@ export const game = {
 				game.dealer.hand[game.dealer.hand.length - 1]
 			);
 			// animate card Render
-			await drawnCard.renderCard(game.dealer.hand.length - 1, false);
+			await drawnCard.renderCard(game.dealer.hand.length - 1, true);
 			game.dealer.container.addChild(drawnCard);
 		}
 
-		if (game.player.handValue > game.dealer.handValue) {
+		if (game.dealer.isBust()) {
+			alert('Dealer busts! You win!');
+		} else if (game.player.handValue > game.dealer.handValue) {
 			alert('You win!');
 		} else if (game.player.handValue == game.dealer.handValue) {
 			alert("Push! It's a tie!");
@@ -193,10 +197,9 @@ export const game = {
 	},
 
 	endRound: () => {
-		// Disable buttons
-		betButton.disabled = false;
-		hitButton.disabled = true;
-		standButton.disabled = true;
+		game.player.resetHand();
+		game.dealer.resetHand();
+		renderBettingUI(game);
 	},
 };
 
