@@ -27,15 +27,20 @@ export class Card extends createjs.Container {
 		const cardDropSound = game.assets.getAsset('cardDropSound');
 		cardDropSound.volume = 0.5;
 
-		// Animate card flip
-		createjs.Tween.get(this.back)
-			.to({ alpha: 0 }, 200)
-			.call(() => {
-				cardDropSound.play();
-				this.back.visible = false;
-				this.front.visible = true;
-			})
-			.to({ alpha: 1 }, 200);
+		return new Promise((resolve) => {
+			// Animate card flip
+			createjs.Tween.get(this.back)
+				.to({ alpha: 0 }, 200)
+				.call(() => {
+					cardDropSound.play();
+					this.back.visible = false;
+					this.front.visible = true;
+				})
+				.to({ alpha: 1 }, 200)
+				.call(() => {
+					resolve();
+				});
+		});
 	}
 
 	renderCard(cardIndex, isDealer) {

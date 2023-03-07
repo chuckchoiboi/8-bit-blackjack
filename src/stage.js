@@ -384,3 +384,188 @@ export const renderBettingUI = (game) => {
 		clearBetButtonText
 	);
 };
+
+export const renderPlayUI = (game) => {
+	const container = game.stage.getChildAt(0);
+
+	// playUI and border
+	const playUI = new createjs.Shape();
+	playUI.graphics.beginFill('#000000').drawRect(745, 15, 200, 610);
+
+	const playUIBorder = new createjs.Shape();
+	playUIBorder.graphics.setStrokeStyle(2).beginStroke('#ffffff');
+	playUIBorder.graphics.drawRect(755, 25, 180, 590);
+
+	// display player chips
+	const playerChipsDisplay = new createjs.Text(
+		`Chips:\n\n$${game.player.chips}`,
+		'20px Press Start',
+		'#ffffff'
+	);
+	playerChipsDisplay.textAlign = 'center';
+	playerChipsDisplay.textBaseline = 'middle';
+	playerChipsDisplay.x = 845;
+	playerChipsDisplay.y = 80;
+
+	// display bet amount
+	const betAmountDisplay = new createjs.Text(
+		`Bet:\n\n$${game.player.betAmount}`,
+		'20px Press Start',
+		'#ffffff'
+	);
+	betAmountDisplay.textAlign = 'center';
+	betAmountDisplay.textBaseline = 'middle';
+	betAmountDisplay.x = 845;
+	betAmountDisplay.y = 220;
+
+	const hitButton = new createjs.Shape();
+	const hitButtonText = new createjs.Text('', '20px Press Start', '#808080');
+	const standButton = new createjs.Shape();
+	const standButtonText = new createjs.Text(
+		'',
+		'20px Press Start',
+		'#808080'
+	);
+	const doubleButton = new createjs.Shape();
+	const doubleButtonText = new createjs.Text(
+		'',
+		'20px Press Start',
+		'#808080'
+	);
+
+	container.addChild(
+		playUI,
+		playUIBorder,
+		playerChipsDisplay,
+		betAmountDisplay
+	);
+
+	const hidePlayUI = () => {
+		container.removeChild(
+			playUI,
+			playUIBorder,
+			playerChipsDisplay,
+			betAmountDisplay,
+			hitButton,
+			hitButtonText,
+			standButton,
+			standButtonText,
+			doubleButton,
+			doubleButtonText
+		);
+		game.stage.update();
+	};
+
+	const renderPlayButton = (
+		button,
+		buttonText,
+		text,
+		{ x, y, width, height },
+		buttonAction
+	) => {
+		// create button
+		button.graphics
+			.setStrokeStyle(3)
+			.beginStroke('#808080')
+			.beginFill('#000000')
+			.drawRoundRect(x, y, width, height, 10);
+
+		// add text to button
+		buttonText.text = text;
+		buttonText.textAlign = 'center';
+		buttonText.textBaseline = 'middle';
+		buttonText.x = x + width / 2;
+		buttonText.y = y + height / 2;
+
+		// set button cursor style to "pointer" for user feedback
+		button.cursor = 'pointer';
+
+		// change button color on mouseover/out
+		button.addEventListener('mouseover', () => {
+			button.graphics
+				.clear()
+				.setStrokeStyle(3)
+				.beginStroke('#ffffff')
+				.beginFill('#000000')
+				.drawRoundRect(x, y, width, height, 10);
+			buttonText.color = '#ffffff';
+			game.stage.update();
+		});
+		button.addEventListener('mouseout', () => {
+			button.graphics
+				.clear()
+				.setStrokeStyle(3)
+				.beginStroke('#808080')
+				.beginFill('#000000')
+				.drawRoundRect(x, y, width, height, 10);
+			buttonText.color = '#808080';
+			game.stage.update();
+		});
+
+		// add button to stage
+		container.addChild(button, buttonText);
+
+		// handle button click event
+		button.on('click', function () {
+			buttonAction();
+		});
+	};
+
+	// HIT BUTTON
+	renderPlayButton(
+		hitButton,
+		hitButtonText,
+		'HIT',
+		{ x: 760, y: 395, width: 170, height: 50 },
+		() => {
+			// If first time hitting, remove double options from the UI
+			if (game.player.hand.length === 2) {
+				container.removeChild(doubleButton, doubleButtonText);
+			}
+
+			game.hit();
+		}
+	);
+
+	// STAND BUTTON
+	renderPlayButton(
+		standButton,
+		standButtonText,
+		'STAND',
+		{
+			x: 760,
+			y: 470,
+			width: 170,
+			height: 50,
+		},
+		() => {
+			hidePlayUI();
+			game.stand();
+		}
+	);
+
+	// DOULBLE BUTTON
+	renderPlayButton(
+		doubleButton,
+		doubleButtonText,
+		'DOUBLE',
+		{
+			x: 760,
+			y: 545,
+			width: 170,
+			height: 50,
+		},
+		() => {
+			if (game.player.chips - game.player.betAmount >= 0) {
+				// check if there's enough chips
+				game.player.chips -= game.player.betAmount;
+				game.player.betAmount *= 2;
+				playerChipsDisplay.text = `Chips:\n\n$${game.player.chips}`;
+				betAmountDisplay.text = `Bet:\n\n$${game.player.betAmount}`;
+				game.double();
+				hidePlayUI();
+			}
+		}
+	);
+	game.stage.update();
+};

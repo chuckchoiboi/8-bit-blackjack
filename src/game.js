@@ -1,7 +1,12 @@
 import { deckLogic } from './deckLogic.js';
 import { Player, Dealer } from './Player.js';
 import { Card } from './Card.js';
-import { getStartScreen, getGameScreen, renderBettingUI } from './stage.js';
+import {
+	getStartScreen,
+	getGameScreen,
+	renderBettingUI,
+	renderPlayUI,
+} from './stage.js';
 import { assetManager } from './assetManager.js';
 
 export const game = {
@@ -64,13 +69,12 @@ export const game = {
 
 		renderBettingUI(game);
 	},
+
 	deal: async () => {
 		deckLogic.resetDeck();
 		deckLogic.shuffleDeck();
 		game.player.reset();
 		game.dealer.reset();
-
-		console.log(game.stage);
 
 		// Deal the initial cards
 		game.player.addCard(deckLogic.drawCard());
@@ -95,98 +99,97 @@ export const game = {
 		game.dealer.container.addChild(dealerCard2);
 
 		// Check for natural blackjack
-		if (deckLogic.isBlackjack(game.player)) {
+		if (game.player.isBlackjack()) {
+			if (game.dealer.isBlackjack()) {
+				await dealerCard2.flip();
+				alert("You and Dealer both have blackjack! It's a tie!");
+				return;
+			}
+
 			alert('Blackjack! You win!');
 			return;
 		}
-		if (deckLogic.isBlackjack(game.dealer)) {
+		if (game.dealer.isBlackjack()) {
+			await dealerCard2.flip();
 			alert('Dealer has blackjack! You lose!');
 			return;
 		}
 
-		// // Enable/disable buttons
-		// hitButton.disabled = false;
-		// standButton.disabled = false;
-		// doubleButton.disabled = false;
+		// render gameUI
+		renderPlayUI(game);
 	},
 
-	hit: () => {
-		game.player.addCard(deckLogic.dealCard());
+	hit: async () => {
+		game.player.addCard(deckLogic.drawCard());
+		const drawnCard = new Card(
+			game.player.hand[game.player.hand.length - 1]
+		);
+		// animate card Render
+		await drawnCard.renderCard(game.player.hand.length - 1, false);
+		game.player.container.addChild(drawnCard);
 
 		// Check for bust
-		if (deckLogic.isBust(game.player)) {
+		if (game.player.isBust()) {
 			alert('Bust! You lose!');
 			game.endRound();
 		}
 	},
 
-	stand: () => {
-		// Reveal dealer's second card
-		game.dealer.revealHand();
+	stand: async () => {
+		game.playDealer();
+	},
 
-		// Dealer hits until at least 17
-		while (deckLogic.getHandValue(game.dealer.hand) < 17) {
-			game.dealer.addCard(deckLogic.dealCard());
+	double: async () => {
+		game.player.addCard(deckLogic.drawCard());
+		const drawnCard = new Card(
+			game.player.hand[game.player.hand.length - 1]
+		);
+		// animate card Render
+		await drawnCard.renderCard(game.player.hand.length - 1, false);
+		game.player.container.addChild(drawnCard);
+
+		// Check for bust
+		if (game.player.isBust()) {
+			alert('Bust! You lose!');
+
+			// reveal dealaer's card
+			await game.dealer.container.children[
+				game.dealer.container.children.length - 1
+			].flip();
+
+			game.endRound();
+		} else {
+			// Reveal dealer's second card
+			game.playDealer();
+		}
+	},
+
+	playDealer: async () => {
+		// reveal dealaer's card
+		await game.dealer.container.children[
+			game.dealer.container.children.length - 1
+		].flip();
+
+		// dealer hits until his handValue is < 17
+		while (game.dealer.handValue < 17) {
+			game.dealer.addCard(deckLogic.drawCard());
+			const drawnCard = new Card(
+				game.dealer.hand[game.dealer.hand.length - 1]
+			);
+			// animate card Render
+			await drawnCard.renderCard(game.dealer.hand.length - 1, false);
+			game.dealer.container.addChild(drawnCard);
 		}
 
-		// Check for bust or win
-		if (deckLogic.isBust(game.dealer)) {
-			alert('Dealer busts! You win!');
-		} else if (
-			deckLogic.getHandValue(game.player.hand) >
-			deckLogic.getHandValue(game.dealer.hand)
-		) {
+		if (game.player.handValue > game.dealer.handValue) {
 			alert('You win!');
-		} else if (
-			deckLogic.getHandValue(game.player.hand) ==
-			deckLogic.getHandValue(game.dealer.hand)
-		) {
+		} else if (game.player.handValue == game.dealer.handValue) {
 			alert("Push! It's a tie!");
 		} else {
 			alert('You lose!');
 		}
 
 		game.endRound();
-	},
-
-	double: () => {
-		game.player.addCard(deckLogic.dealCard());
-
-		// Check for bust
-		if (deckLogic.isBust(game.player)) {
-			alert('Bust! You lose!');
-
-			// Reveal dealer's second card and end the game immediately
-			game.dealer.revealHand();
-			game.endRound();
-		} else {
-			// Reveal dealer's second card
-			game.dealer.revealHand();
-
-			// Dealer hits until at least 17
-			while (deckLogic.getHandValue(game.dealer.hand) < 17) {
-				game.dealer.addCard(deckLogic.dealCard());
-			}
-
-			// Check for bust or win
-			if (deckLogic.isBust(game.dealer)) {
-				alert('Dealer busts! You win!');
-			} else if (
-				deckLogic.getHandValue(game.player.hand) >
-				deckLogic.getHandValue(game.dealer.hand)
-			) {
-				alert('You win!');
-			} else if (
-				deckLogic.getHandValue(game.player.hand) ==
-				deckLogic.getHandValue(game.dealer.hand)
-			) {
-				alert("Push! It's a tie!");
-			} else {
-				alert('You lose!');
-			}
-
-			game.endRound();
-		}
 	},
 
 	endRound: () => {

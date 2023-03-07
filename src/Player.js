@@ -16,6 +16,14 @@ class Player extends createjs.Container {
 		this.handValue = deckLogic.getHandValue(this.hand);
 	}
 
+	isBlackjack() {
+		return deckLogic.isBlackjack(this);
+	}
+
+	isBust() {
+		return deckLogic.isBust(this);
+	}
+
 	reset() {
 		this.hand = [];
 		this.handValue = 0;
@@ -37,6 +45,10 @@ class Dealer extends createjs.Container {
 	addCard(card) {
 		this.hand.push(card);
 		this.handValue = deckLogic.getHandValue(this.hand);
+	}
+
+	isBlackjack() {
+		return deckLogic.isBlackjack(this);
 	}
 
 	reset() {
