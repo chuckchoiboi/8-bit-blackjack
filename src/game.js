@@ -229,11 +229,11 @@ export const game = {
 			setTimeout(() => {
 				container.removeChild(winnerDisplay);
 				resolve();
-			}, 2000);
+			}, 3000);
 		});
 	},
 
-	endRound: () => {
+	endRound: async () => {
 		game.player.resetHand();
 		game.dealer.resetHand();
 
@@ -241,6 +241,8 @@ export const game = {
 			// render message, stop the music, and reset games and load start screen
 			game.backgroundMusic.pause();
 			game.backgroundMusic.currentTime = 0;
+			game.assets.getAsset('gameOver').play();
+			await game.showWinnerMessage('You ran out of chips.\nGame Over');
 			game.stage.getChildAt(0).removeAllChildren();
 			game.stage.removeAllChildren();
 			game.loadStartScreen();
@@ -264,6 +266,7 @@ assetManager.loadAssets(
 		{ name: 'backgroundMusic', src: 'assets/audio/background.mp3' },
 		{ name: 'chipSound', src: 'assets/audio/coins.mp3' },
 		{ name: 'cardDropSound', src: 'assets/audio/cardDrop.mp3' },
+		{ name: 'gameOver', src: 'assets/audio/gameOver.mp3' },
 	],
 	() => {
 		// load start screen
