@@ -108,6 +108,7 @@ export const game = {
 				alert("You and Dealer both have blackjack! It's a tie!");
 				return;
 			}
+			game.player.chips += (game.player.betAmount * 3) / 2;
 
 			alert('Blackjack! You win!');
 			game.endRound();
@@ -192,10 +193,13 @@ export const game = {
 
 		if (game.dealer.isBust()) {
 			alert('Dealer busts! You win!');
+			game.player.chips += game.player.betAmount * 2;
 		} else if (game.player.handValue > game.dealer.handValue) {
 			alert('You win!');
+			game.player.chips += game.player.betAmount * 2;
 		} else if (game.player.handValue == game.dealer.handValue) {
 			alert("Push! It's a tie!");
+			game.player.chips += game.player.betAmount;
 		} else {
 			alert('You lose!');
 		}
