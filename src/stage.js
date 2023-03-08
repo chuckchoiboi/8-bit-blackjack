@@ -585,7 +585,6 @@ export const renderPlayUI = (game) => {
 			height: 50,
 		},
 		() => {
-			console.log(game.player.betAmount);
 			if (game.player.chips - game.player.betAmount >= 0) {
 				hidePlayUI();
 				// check if there's enough chips
