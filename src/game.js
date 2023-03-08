@@ -105,18 +105,22 @@ export const game = {
 		if (game.player.isBlackjack()) {
 			if (game.dealer.isBlackjack()) {
 				await dealerCard2.flip();
-				alert("You and Dealer both have blackjack! It's a tie!");
+				await game.showWinnerMessage(
+					"You and Dealer both have blackjack!\nIt's a tie!"
+				);
+				game.player.chips += game.player.betAmount;
+				game.endRound();
 				return;
 			}
 			game.player.chips += (game.player.betAmount * 3) / 2;
 
-			alert('Blackjack! You win!');
+			await game.showWinnerMessage('Blackjack! You win!');
 			game.endRound();
 			return;
 		}
 		if (game.dealer.isBlackjack()) {
 			await dealerCard2.flip();
-			alert('Dealer has blackjack! You lose!');
+			await game.showWinnerMessage('Dealer has blackjack!\nYou lose!');
 			game.endRound();
 			return;
 		}
@@ -136,7 +140,7 @@ export const game = {
 
 		// Check for bust
 		if (game.player.isBust()) {
-			alert('Bust! You lose!');
+			await game.showWinnerMessage('Bust! You lose!');
 			game.endRound();
 			return;
 		}
@@ -160,7 +164,7 @@ export const game = {
 
 		// Check for bust
 		if (game.player.isBust()) {
-			alert('Bust! You lose!');
+			await game.showWinnerMessage('Bust! You lose!');
 
 			// reveal dealaer's card
 			await game.dealer.container.children[
@@ -192,19 +196,41 @@ export const game = {
 		}
 
 		if (game.dealer.isBust()) {
-			alert('Dealer busts! You win!');
+			await game.showWinnerMessage('Dealer busts! You win!');
 			game.player.chips += game.player.betAmount * 2;
 		} else if (game.player.handValue > game.dealer.handValue) {
-			alert('You win!');
+			await game.showWinnerMessage('You win!');
 			game.player.chips += game.player.betAmount * 2;
 		} else if (game.player.handValue == game.dealer.handValue) {
-			alert("Push! It's a tie!");
+			await game.showWinnerMessage("Push! It's a tie!");
 			game.player.chips += game.player.betAmount;
 		} else {
-			alert('You lose!');
+			await game.showWinnerMessage('You lose!');
 		}
 
 		game.endRound();
+	},
+
+	showWinnerMessage: async (message) => {
+		const container = game.stage.getChildAt(0);
+		const winnerDisplay = new createjs.Text(
+			message,
+			'20px Press Start',
+			'#ffffff'
+		);
+		winnerDisplay.textAlign = 'center';
+		winnerDisplay.textBaseline = 'middle';
+		winnerDisplay.x = 960 / 2;
+		winnerDisplay.y = 640 / 2 - 50;
+
+		container.addChild(winnerDisplay);
+
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				container.removeChild(winnerDisplay);
+				resolve();
+			}, 2000);
+		});
 	},
 
 	endRound: () => {
