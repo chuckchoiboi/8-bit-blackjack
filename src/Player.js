@@ -27,12 +27,12 @@ class Player extends createjs.Container {
 	resetHand() {
 		this.hand = [];
 		this.handValue = 0;
-		this.betAmount = 0;
 		this.container.removeAllChildren();
 	}
 
 	resetGame() {
 		this.chips = 1000;
+		this.betAmount = 0;
 		this.resetHand();
 	}
 }
