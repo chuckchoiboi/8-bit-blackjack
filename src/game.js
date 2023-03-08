@@ -19,26 +19,28 @@ export const game = {
 	loadStartScreen: () => {
 		game.assets = assetManager;
 
-		// Add all 52 cards to the asset manager
-		for (let rank of [
-			'A',
-			'2',
-			'3',
-			'4',
-			'5',
-			'6',
-			'7',
-			'8',
-			'9',
-			'10',
-			'J',
-			'Q',
-			'K',
-		]) {
-			for (let suit of ['clubs', 'diamonds', 'hearts', 'spades']) {
-				const cardName = `${rank}-${suit}`;
-				const cardPath = `assets/img/cards/${cardName}.gif`;
-				game.assets.addAsset(cardName, cardPath);
+		if (!game.stage) {
+			// Add all 52 cards to the asset manager on first time loading
+			for (let rank of [
+				'A',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9',
+				'10',
+				'J',
+				'Q',
+				'K',
+			]) {
+				for (let suit of ['clubs', 'diamonds', 'hearts', 'spades']) {
+					const cardName = `${rank}-${suit}`;
+					const cardPath = `assets/img/cards/${cardName}.gif`;
+					game.assets.addAsset(cardName, cardPath);
+				}
 			}
 		}
 
@@ -49,6 +51,7 @@ export const game = {
 		const startScreen = getStartScreen(game);
 
 		game.stage.addChild(startScreen);
+
 		game.stage.update();
 	},
 
@@ -134,7 +137,11 @@ export const game = {
 		if (game.player.isBust()) {
 			alert('Bust! You lose!');
 			game.endRound();
+			return;
 		}
+
+		// render gameUI again if not bust
+		renderPlayUI(game);
 	},
 
 	stand: async () => {
@@ -199,6 +206,17 @@ export const game = {
 	endRound: () => {
 		game.player.resetHand();
 		game.dealer.resetHand();
+
+		if (game.player.chips < 5) {
+			// render message, stop the music, and reset games and load start screen
+			game.backgroundMusic.pause();
+			game.backgroundMusic.currentTime = 0;
+			game.stage.getChildAt(0).removeAllChildren();
+			game.stage.removeAllChildren();
+			game.loadStartScreen();
+			return;
+		}
+
 		renderBettingUI(game);
 	},
 };
