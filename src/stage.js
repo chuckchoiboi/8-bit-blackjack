@@ -3,7 +3,11 @@ export const getStartScreen = (game) => {
 
 	// Background
 	const startBackground = new createjs.Shape();
-	startBackground.graphics.beginFill('#000000').drawRect(0, 0, 960, 640);
+	startBackground.graphics
+		.beginStroke('#FFFFFF')
+		.setStrokeStyle(10)
+		.beginFill('#000000')
+		.drawRect(0, 0, 960, 640);
 	const canvasWidth = game.stage.canvas.width;
 	const canvasHeight = game.stage.canvas.height;
 

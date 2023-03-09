@@ -14,10 +14,24 @@
 
 			body {
 				font-family: 'Press-Start', sans-serif;
+				background-image: url('assets/img/background/background-image.jpeg');
+				background-repeat: repeat;
 			}
 		</style>
 		<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
-		<script type="module" src="./src/game.js"></script>
+		<script type="module">
+			(async () => {
+				const font = new FontFace(
+					'Press-Start',
+					'url(assets/fonts/prstart.ttf)'
+				);
+				await font.load();
+				document.fonts.add(font);
+				await document.fonts.ready;
+
+				await import('./src/game.js');
+			})();
+		</script>
 	</head>
 	<body>
 		<canvas
