@@ -24,6 +24,17 @@ class Player extends createjs.Container {
 		return deckLogic.isBust(this);
 	}
 
+	getHandValue() {
+		let handValue = this.handValue;
+		let hasAce = deckLogic.hasAce(this.hand);
+
+		if (hasAce) {
+			return `${handValue} (${handValue - 10})`;
+		}
+
+		return handValue;
+	}
+
 	resetHand() {
 		this.hand = [];
 		this.handValue = 0;
@@ -57,6 +68,22 @@ class Dealer extends createjs.Container {
 
 	isBust() {
 		return deckLogic.isBust(this);
+	}
+
+	getHandValue(revealCard = false) {
+		let handValue = this.handValue;
+		let hasAce = deckLogic.hasAce(this.hand);
+
+		if (!revealCard && this.hand.length === 2) {
+			handValue = deckLogic.getHandValue([this.hand[0]]);
+			hasAce = deckLogic.hasAce([this.hand[0]]);
+		}
+
+		if (hasAce) {
+			return `${handValue} (${handValue - 10})`;
+		}
+
+		return handValue;
 	}
 
 	resetHand() {

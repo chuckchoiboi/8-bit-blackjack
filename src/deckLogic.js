@@ -86,6 +86,18 @@ export const deckLogic = {
 		return value;
 	},
 
+	hasAce: (hand) => {
+		let hasAce = false;
+
+		for (let i = 0; i < hand.length; i++) {
+			if (hand[i].rank === 'A') {
+				hasAce = true;
+			}
+		}
+
+		return hasAce;
+	},
+
 	getDisplayValue: (hand) => {
 		let value = 0;
 		let aceCount = 0;

@@ -79,6 +79,25 @@ export const game = {
 		game.player.resetHand();
 		game.dealer.resetHand();
 
+		const playerHandTotalText = new createjs.Text(
+			'Player Total:',
+			'20px Press Start',
+			'#ffffff'
+		);
+		playerHandTotalText.x = 50;
+		playerHandTotalText.y = 360;
+
+		const dealerHandTotalText = new createjs.Text(
+			'Dealer Total:',
+			'20px Press Start',
+			'#ffffff'
+		);
+		dealerHandTotalText.x = 50;
+		dealerHandTotalText.y = 60;
+
+		game.player.container.addChild(playerHandTotalText);
+		game.dealer.container.addChild(dealerHandTotalText);
+
 		// Deal the initial cards
 		game.player.addCard(deckLogic.drawCard());
 		game.dealer.addCard(deckLogic.drawCard());
@@ -98,8 +117,14 @@ export const game = {
 		game.dealer.container.addChild(dealerCard1);
 		await playerCard2.renderCard(1, false);
 		game.player.container.addChild(playerCard2);
+		game.player.container.getChildAt(
+			0
+		).text = `Player Total: ${game.player.getHandValue()}`;
 		await dealerCard2.renderCard(1, true);
 		game.dealer.container.addChild(dealerCard2);
+		game.dealer.container.getChildAt(
+			0
+		).text = `Dealer Total: ${game.dealer.getHandValue()}`;
 
 		// Check for natural blackjack
 		if (game.player.isBlackjack()) {
@@ -136,6 +161,9 @@ export const game = {
 		);
 		// animate card Render
 		await drawnCard.renderCard(game.player.hand.length - 1, false);
+		game.player.container.getChildAt(
+			0
+		).text = `Player Total: ${game.player.getHandValue()}`;
 		game.player.container.addChild(drawnCard);
 
 		// Check for bust
@@ -160,6 +188,9 @@ export const game = {
 		);
 		// animate card Render
 		await drawnCard.renderCard(game.player.hand.length - 1, false);
+		game.player.container.getChildAt(
+			0
+		).text = `Player Total: ${game.player.getHandValue()}`;
 		game.player.container.addChild(drawnCard);
 
 		// Check for bust
@@ -183,6 +214,9 @@ export const game = {
 		await game.dealer.container.children[
 			game.dealer.container.children.length - 1
 		].flip();
+		game.dealer.container.getChildAt(
+			0
+		).text = `Dealer Total: ${game.dealer.getHandValue(true)}`;
 
 		// dealer hits until his handValue is < 17
 		while (game.dealer.handValue < 17) {
@@ -192,6 +226,9 @@ export const game = {
 			);
 			// animate card Render
 			await drawnCard.renderCard(game.dealer.hand.length - 1, true);
+			game.dealer.container.getChildAt(
+				0
+			).text = `Dealer Total: ${game.dealer.getHandValue()}`;
 			game.dealer.container.addChild(drawnCard);
 		}
 
