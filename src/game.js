@@ -81,7 +81,7 @@ export const game = {
 
 		const playerHandTotalText = new createjs.Text(
 			'Player Total:',
-			'20px Press Start',
+			'20px Press-Start',
 			'#ffffff'
 		);
 		playerHandTotalText.x = 50;
@@ -89,7 +89,7 @@ export const game = {
 
 		const dealerHandTotalText = new createjs.Text(
 			'Dealer Total:',
-			'20px Press Start',
+			'20px Press-Start',
 			'#ffffff'
 		);
 		dealerHandTotalText.x = 50;
@@ -252,7 +252,7 @@ export const game = {
 		const container = game.stage.getChildAt(0);
 		const winnerDisplay = new createjs.Text(
 			message,
-			'20px Press Start',
+			'20px Press-Start',
 			'#ffffff'
 		);
 		winnerDisplay.textAlign = 'center';

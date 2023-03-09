@@ -10,7 +10,7 @@ export const getStartScreen = (game) => {
 	// Title Text
 	const titleText = new createjs.Text(
 		'8 Bit Blackjack',
-		'40px Press Start',
+		'40px Press-Start',
 		'#FF0000'
 	);
 	titleText.textAlign = 'center';
@@ -44,7 +44,7 @@ export const getStartScreen = (game) => {
 	// Credit Text
 	const creditText = new createjs.Text(
 		'CREATED BY CHUCK CHOI',
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	creditText.textAlign = 'center';
@@ -91,7 +91,7 @@ export const getStartScreen = (game) => {
 	// Start Button
 	const startButton = new createjs.Text(
 		'START GAME',
-		'20px Press Start',
+		'20px Press-Start',
 		'#FF0000'
 	);
 	startButton.textAlign = 'center';
@@ -137,7 +137,7 @@ export const getGameScreen = (game) => {
 	// Initial load text
 	const startText1 = new createjs.Text(
 		"Draw cards and beat the dealer's hand",
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	startText1.textAlign = 'center';
@@ -148,7 +148,7 @@ export const getGameScreen = (game) => {
 
 	const startText2 = new createjs.Text(
 		'without going over 21!',
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	startText2.textAlign = 'center';
@@ -222,7 +222,7 @@ export const renderBettingUI = (game) => {
 	// Heading text
 	const bettingUIHeadingText = new createjs.Text(
 		'Place your bet: $0',
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	bettingUIHeadingText.textAlign = 'center';
@@ -232,7 +232,7 @@ export const renderBettingUI = (game) => {
 	// Player chips total
 	const bettingUIChipsTotalText = new createjs.Text(
 		`Chips total: $${game.player.chips}`,
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	bettingUIChipsTotalText.textAlign = 'center';
@@ -352,7 +352,7 @@ export const renderBettingUI = (game) => {
 
 	const bettingButtonText = new createjs.Text(
 		'Bet',
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	bettingButtonText.textAlign = 'center';
@@ -387,7 +387,7 @@ export const renderBettingUI = (game) => {
 
 	const clearBetButtonText = new createjs.Text(
 		'Clear Bet',
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	clearBetButtonText.textAlign = 'center';
@@ -428,7 +428,7 @@ export const renderPlayUI = (game) => {
 	// display player chips
 	const playerChipsDisplay = new createjs.Text(
 		`Chips:\n\n$${game.player.chips}`,
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	playerChipsDisplay.textAlign = 'center';
@@ -439,7 +439,7 @@ export const renderPlayUI = (game) => {
 	// display bet amount
 	const betAmountDisplay = new createjs.Text(
 		`Bet:\n\n$${game.player.betAmount}`,
-		'20px Press Start',
+		'20px Press-Start',
 		'#ffffff'
 	);
 	betAmountDisplay.textAlign = 'center';
@@ -448,17 +448,17 @@ export const renderPlayUI = (game) => {
 	betAmountDisplay.y = 220;
 
 	const hitButton = new createjs.Shape();
-	const hitButtonText = new createjs.Text('', '20px Press Start', '#808080');
+	const hitButtonText = new createjs.Text('', '20px Press-Start', '#808080');
 	const standButton = new createjs.Shape();
 	const standButtonText = new createjs.Text(
 		'',
-		'20px Press Start',
+		'20px Press-Start',
 		'#808080'
 	);
 	const doubleButton = new createjs.Shape();
 	const doubleButtonText = new createjs.Text(
 		'',
-		'20px Press Start',
+		'20px Press-Start',
 		'#808080'
 	);
 
