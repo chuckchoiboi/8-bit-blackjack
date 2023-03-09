@@ -585,16 +585,18 @@ export const renderPlayUI = (game) => {
 			height: 50,
 		},
 		() => {
-			if (game.player.chips - game.player.betAmount >= 0) {
-				hidePlayUI();
-				// check if there's enough chips
-				game.player.chips -= game.player.betAmount;
-				game.player.betAmount *= 2;
-				playerChipsDisplay.text = `Chips:\n\n$${game.player.chips}`;
-				betAmountDisplay.text = `Bet:\n\n$${game.player.betAmount}`;
-				game.double();
-			}
+			hidePlayUI();
+			game.player.chips -= game.player.betAmount;
+			game.player.betAmount *= 2;
+			playerChipsDisplay.text = `Chips:\n\n$${game.player.chips}`;
+			betAmountDisplay.text = `Bet:\n\n$${game.player.betAmount}`;
+			game.double();
 		}
 	);
+
+	if (game.player.chips - game.player.betAmount < 0) {
+		container.removeChild(doubleButton, doubleButtonText);
+	}
+
 	game.stage.update();
 };
