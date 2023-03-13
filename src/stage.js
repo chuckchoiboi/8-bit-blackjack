@@ -551,10 +551,6 @@ export const renderPlayUI = (game) => {
 		'HIT',
 		{ x: 760, y: 395, width: 170, height: 50 },
 		() => {
-			// If first time hitting, remove double options from the UI
-			if (game.player.hand.length === 2) {
-				container.removeChild(doubleButton, doubleButtonText);
-			}
 			hidePlayUI();
 			game.hit();
 		}
@@ -597,8 +593,11 @@ export const renderPlayUI = (game) => {
 			game.double();
 		}
 	);
-
-	if (game.player.chips - game.player.betAmount < 0) {
+	// if player don't have enough chips to double or the player already hit, remove double button
+	if (
+		game.player.chips - game.player.betAmount < 0 ||
+		game.player.hand.length !== 2
+	) {
 		container.removeChild(doubleButton, doubleButtonText);
 	}
 
