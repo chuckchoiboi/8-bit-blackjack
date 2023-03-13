@@ -7,9 +7,28 @@
 		<title>8 Bit Blackjack</title>
 		<link rel="icon" href="assets/img/cards/A-spades.gif" />
 		<style>
+			@font-face {
+				font-family: 'Press-Start';
+				src: url('assets/fonts/prstart.ttf') format('truetype');
+			}
+
 			body {
+				font-family: 'Press-Start', sans-serif;
 				background-image: url('assets/img/background/background-image.jpeg');
 				background-repeat: repeat;
+			}
+			a {
+				display: block;
+				width: 300px;
+				margin: 20px auto 0;
+				text-align: center;
+				color: white;
+				text-decoration: none;
+				font-weight: bold;
+				font-size: 24px;
+			}
+			a:hover {
+				color: red;
 			}
 		</style>
 		<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
@@ -34,5 +53,10 @@
 			height="640"
 			style="display: block; margin: 0 auto"
 		></canvas>
+		<a
+			href="https://github.com/chuckchoiboi/8-bit-blackjack"
+			target="_blank"
+			>Github Link</a
+		>
 	</body>
 </html>
