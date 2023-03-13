@@ -278,6 +278,7 @@ export const game = {
 			// render message, stop the music, and reset games and load start screen
 			game.backgroundMusic.pause();
 			game.backgroundMusic.currentTime = 0;
+			game.backgroundMusic.loop = true;
 			game.assets.getAsset('gameOver').play();
 			await game.showWinnerMessage('You ran out of chips.\nGame Over');
 			game.stage.getChildAt(0).removeAllChildren();
